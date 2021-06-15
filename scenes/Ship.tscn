@@ -50,7 +50,6 @@ color_ramp = SubResource( 4 )
 [node name="Ship" type="Node2D"]
 script = ExtResource( 1 )
 fireTimeout = 0.3
-shipRelativeTurnDelta = 10
 
 [node name="ShipPhysics" type="KinematicBody2D" parent="."]
 collision_mask = 54

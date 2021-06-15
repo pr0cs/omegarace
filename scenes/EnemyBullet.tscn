@@ -1,16 +1,18 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/EnemyBulletPhysics.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://shaders/PlasmaNode2.shader" type="Shader" id=3]
+[ext_resource path="res://scripts/EnemyBullet.gd" type="Script" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 7.94293, 3.85184 )
 
-[sub_resource type="ShaderMaterial" id=4]
+[sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 3 )
 
 [node name="EnemyBullet" type="Node2D"]
+script = ExtResource( 4 )
 
 [node name="EnemyBulletPhysics" type="KinematicBody2D" parent="."]
 collision_layer = 16
@@ -21,7 +23,7 @@ script = ExtResource( 1 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="EnemyBulletPhysics"]
-material = SubResource( 4 )
+material = SubResource( 2 )
 position = Vector2( 0.167046, -0.0556811 )
 scale = Vector2( 0.246564, 0.11566 )
 texture = ExtResource( 2 )

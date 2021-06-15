@@ -4,8 +4,7 @@ var bulletScene = preload("res://scenes/Bullet.tscn")
 onready var _ship_body = $ShipPhysics
 onready var _weapon_position = $ShipPhysics/Weapon
 onready var fireTimer = $ShipPhysics/FireTimer
-export var fireTimeout:float = 0.2
-export var shipRelativeTurnDelta:int=5
+export var fireTimeout:float = 0.2 # user cannot spam fire, 0.2 sec delay on being able to shoot again
 var canFire = true
 
 func _unhandled_input(event):
@@ -25,7 +24,6 @@ func _unhandled_input(event):
 	elif (event is InputEventMouseMotion):
 		var evt = event as InputEventMouseMotion
 		_ship_body._turn_ship(evt.relative.x)
-
 
 func _on_FireTimer_timeout():
 	canFire=true

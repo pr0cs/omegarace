@@ -21,6 +21,7 @@ var rotation: = 0.0 setget set_rotation
 var score: = 0 setget set_score
 var lives: = 0 setget set_lives
 var wave: = 1 setget set_wave
+var currentWaveType = WaveType.NORMAL
 
 # local variables
 var hiscore: = 0
@@ -47,7 +48,13 @@ func get_random_wavetype() -> int:
 		elif chance > 79:
 			return WaveType.BLITZ
 	return WaveType.NORMAL
+	
+func set_current_wavetype(waveType:int) -> void:
+	currentWaveType = waveType
 
+func get_current_wavetype() -> int:
+	return currentWaveType
+	
 func isGameOver() -> bool:
 	return (lives<=0)
 

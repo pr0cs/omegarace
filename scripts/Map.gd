@@ -37,21 +37,32 @@ func compute_scorebox_rect():
 	scoreBox = scoreBox.expand(leftBox.b+_defaultPos)
 	scoreBox = scoreBox.expand(rightBox.b+_defaultPos)
 	scoreBox = scoreBox.expand(rightBox.b+_defaultPos)
-	
+
+func _remove_all_bullets() ->void :
+	var kids = get_children()
+	for kid in kids:
+		if "Bullet" in kid.name:
+			kid.queue_free()
+		
 func _on_Timer_timeout():
+	_remove_all_bullets()
 	# warp to next wave?  some sort of animation
 	Scoreboard.wave+=1
 	respawn_player()
 
 func respawn_player():
+	_remove_all_bullets()
 	print("respawn")
 	if(!Scoreboard.isGameOver()):
 		remove_child(player)
 		spawn_player()
 		spawn_enemies()
 	
-func check_wave_complete(destroyedEnemy:Node2D):
+func check_wave_complete(destroyedEnemy:Node2D) ->void:
+	var enemyCount = enemyArray.size()
 	enemyArray.erase(destroyedEnemy)
+	if(enemyCount == enemyArray.size()):
+		return # no enemy removed, probably a bullet lets ignore it
 	print(destroyedEnemy.name," was killed, enemies left:",enemyArray.size())
 	if(enemyArray.empty()):
 		#respawn enemies and player ship after X number of seconds
@@ -81,8 +92,11 @@ func spawn_player():
 
 func spawn_enemy(enemy:Node2D,spriteName:String,wave:int):
 	add_child(enemy)
-	var sprite:AnimatedSprite = enemy.get_node(spriteName)
-	var default_size = sprite.frames.get_frame("Evolving",0).get_size() # assume all frames are the same size
+	#var sprite:AnimatedSprite = enemy.get_node(spriteName)
+	#var default_size = sprite.frames.get_frame("Evolving",0).get_size() # assume all frames are the same size
+	var sprite:Sprite = enemy.get_node(spriteName)
+	var default_size = sprite.get_rect().size.x # assume all frames are the same size
+	sprite.show()	
 	default_size*=(enemy.scale/2) 
 	var xpos = Scoreboard.randi_range(default_size.x,OS.window_size.x-default_size.x)
 	var ypos = Scoreboard.randi_range(scoreBox.end.y+default_size.y,OS.window_size.y-default_size.y)
@@ -112,17 +126,20 @@ func spawn_enemies() -> void :
 	elif(waveType == Scoreboard.WaveType.HORDE):
 		waveEnemyCount = 30
 		waveEvolveCount = 2
-	
+	Scoreboard.set_current_wavetype(waveType)
 	if(waveEnemyCount < 6):
 		waveEnemyCount = 6
 	for e in waveEnemyCount:
 		var enemy = enemyScene.instance() as Node2D
-		spawn_enemy(enemy,"EnemyKinematicBody2D/EnemySprite",Scoreboard.wave)
+		spawn_enemy(enemy,"EnemyKinematicBody2D/StaticSprite",Scoreboard.wave)
 		if(waveEvolveCount >0):
 			var minLife = 4
 			var maxLife = 10
 			enemy._set_evolve_time(Scoreboard.randi_range(minLife,maxLife))
 			waveEvolveCount-=1
+			var animSprite = enemy.get_node("EnemyKinematicBody2D/EnemySprite") as AnimatedSprite
+			animSprite.show()
+
 			
 
 ############################################################################		

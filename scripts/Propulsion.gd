@@ -11,11 +11,6 @@ export var deceleration_factor = 0.3
 var rotate_speed = 0
 var thrusting = false
 
-func _ready():
-	Scoreboard.connect("player_died",self,"show_ship_explosion")
-
-func show_ship_explosion()->void:
-	print("ship to explode")
 
 # external funcs
 func _thrust():
@@ -83,4 +78,5 @@ func _physics_process(delta):
 
 func player_collision(collisionResult:KinematicCollision2D):
 	# Display explosion?
+	print ("Show ship explosion")
 	Scoreboard.lives -=1

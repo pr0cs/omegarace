@@ -25,3 +25,8 @@ func _physics_process(delta):
 			if(_collisionResult.collider.has_method("player_collision")):
 				_collisionResult.collider.player_collision(_collisionResult)
 		queue_free()
+
+func has_been_shot():
+	print("enemy bullet destroyed")
+	Scoreboard.enemy_killed(self)
+	queue_free()
