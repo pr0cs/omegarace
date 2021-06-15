@@ -1,0 +1,61 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/Map.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/Main.gd" type="Script" id=4]
+[ext_resource path="res://assets/kenneyUI.tres" type="Theme" id=5]
+
+[node name="Main" type="Node"]
+pause_mode = 1
+script = ExtResource( 4 )
+
+[node name="Map" parent="." instance=ExtResource( 2 )]
+
+[node name="PauseDialog" type="PopupDialog" parent="."]
+pause_mode = 2
+visible = true
+margin_left = 471.0
+margin_top = 258.0
+margin_right = 744.0
+margin_bottom = 438.0
+theme = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="PauseDialog"]
+margin_right = 277.0
+margin_bottom = 184.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="PauseDialog/Panel"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 101.0
+margin_bottom = 26.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Paused..."
+
+[node name="Resume" type="Button" parent="PauseDialog/Panel"]
+margin_left = 80.0
+margin_top = 59.383
+margin_right = 185.0
+margin_bottom = 104.383
+text = "Resume"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Main" type="Button" parent="PauseDialog/Panel"]
+margin_left = 80.0
+margin_top = 116.489
+margin_right = 185.0
+margin_bottom = 161.489
+text = "Quit"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="PauseDialog/Panel/Resume" to="." method="_on_Resume_pressed"]
+[connection signal="pressed" from="PauseDialog/Panel/Main" to="." method="_on_Main_pressed"]

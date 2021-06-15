@@ -1,0 +1,162 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://scripts/Start.gd" type="Script" id=1]
+[ext_resource path="res://assets/logo4.png" type="Texture" id=2]
+[ext_resource path="res://shaders/PlasmaNode.shader" type="Shader" id=3]
+[ext_resource path="res://icon.png" type="Texture" id=4]
+[ext_resource path="res://assets/kenneyUI.tres" type="Theme" id=5]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 3 )
+
+[sub_resource type="StyleBoxTexture" id=2]
+texture = ExtResource( 2 )
+region_rect = Rect2( 0, 0, 907, 256 )
+
+[sub_resource type="Gradient" id=3]
+colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
+
+[sub_resource type="ParticlesMaterial" id=5]
+lifetime_randomness = 1.0
+emission_shape = 2
+emission_box_extents = Vector3( 640, 360, 1 )
+flag_disable_z = true
+flatness = 0.5
+gravity = Vector3( 0, 0, 0 )
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = -100.0
+tangential_accel = -48.84
+angle = 720.0
+scale = 3.0
+scale_random = 1.0
+color_ramp = SubResource( 4 )
+
+[node name="Start" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 5 )
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Play" type="Button" parent="ColorRect"]
+margin_left = 585.0
+margin_top = 276.668
+margin_right = 705.0
+margin_bottom = 321.668
+theme = ExtResource( 5 )
+text = "Play"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Settings" type="Button" parent="ColorRect"]
+margin_left = 585.0
+margin_top = 336.055
+margin_right = 705.0
+margin_bottom = 381.055
+text = "Settings"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Quit" type="Button" parent="ColorRect"]
+margin_left = 585.0
+margin_top = 395.808
+margin_right = 705.0
+margin_bottom = 440.808
+text = "Quit"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SettingsDialog" type="PopupDialog" parent="ColorRect"]
+visible = true
+margin_left = 520.0
+margin_top = 263.0
+margin_right = 780.0
+margin_bottom = 513.0
+theme = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="ColorRect/SettingsDialog"]
+margin_left = 1.2215
+margin_top = -9.14047
+margin_right = 258.221
+margin_bottom = 253.86
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Fullscreen" type="CheckBox" parent="ColorRect/SettingsDialog/Panel"]
+margin_left = 30.2039
+margin_top = 35.8686
+margin_right = 204.204
+margin_bottom = 107.869
+text = "Full Screen"
+
+[node name="OK" type="Button" parent="ColorRect/SettingsDialog/Panel"]
+margin_left = 22.4285
+margin_top = 207.541
+margin_right = 122.428
+margin_bottom = 252.541
+text = "Apply"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Cancel" type="Button" parent="ColorRect/SettingsDialog/Panel"]
+margin_left = 140.0
+margin_top = 207.0
+margin_right = 240.0
+margin_bottom = 252.0
+text = "Cancel"
+
+[node name="Logo" type="Node2D" parent="ColorRect"]
+position = Vector2( 345, 57 )
+scale = Vector2( 0.5, 0.5 )
+
+[node name="Plasma" type="Sprite" parent="ColorRect/Logo"]
+material = SubResource( 1 )
+position = Vector2( 575.325, 199.389 )
+scale = Vector2( 17.9696, 6.19717 )
+texture = ExtResource( 4 )
+
+[node name="Logo" type="Panel" parent="ColorRect/Logo"]
+margin_left = -1.0
+margin_right = 1159.0
+margin_bottom = 399.0
+custom_styles/panel = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Starfield" type="Particles2D" parent="."]
+position = Vector2( 640, 360 )
+amount = 128
+lifetime = 50.0
+speed_scale = 14.08
+randomness = 0.68
+visibility_rect = Rect2( -300, -100, 600, 200 )
+process_material = SubResource( 5 )
+
+[connection signal="pressed" from="ColorRect/Play" to="." method="_on_Play_pressed"]
+[connection signal="pressed" from="ColorRect/Settings" to="." method="_on_Settings_pressed"]
+[connection signal="pressed" from="ColorRect/Quit" to="." method="_on_Quit_pressed"]
+[connection signal="pressed" from="ColorRect/SettingsDialog/Panel/OK" to="." method="_on_OK_pressed"]
+[connection signal="pressed" from="ColorRect/SettingsDialog/Panel/Cancel" to="." method="_on_Cancel_pressed"]

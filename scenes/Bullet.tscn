@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/01.png" type="Texture" id=1]
+[ext_resource path="res://scripts/Bullet.gd" type="Script" id=2]
+
+[sub_resource type="CircleShape2D" id=1]
+custom_solver_bias = 1.0
+radius = 6.42748
+
+[node name="BulletPhysics" type="KinematicBody2D"]
+collision_layer = 8
+collision_mask = 62
+collision/safe_margin = 1.0
+script = ExtResource( 2 )
+
+[node name="BulletShape" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="BulletSprite" type="Sprite" parent="."]
+show_behind_parent = true
+rotation = -3.14159
+texture = ExtResource( 1 )

@@ -1,0 +1,86 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://assets/station4.png" type="Texture" id=1]
+[ext_resource path="res://assets/station3.png" type="Texture" id=2]
+[ext_resource path="res://assets/station2.png" type="Texture" id=3]
+[ext_resource path="res://scripts/EnemyPhysics.gd" type="Script" id=4]
+[ext_resource path="res://scripts/Enemy.gd" type="Script" id=5]
+[ext_resource path="res://shaders/Blur.shader" type="Shader" id=6]
+
+[sub_resource type="Animation" id=1]
+length = 3.0
+loop = true
+step = 0.033
+tracks/0/type = "value"
+tracks/0/path = NodePath("EnemySprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.891, 1.881 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("EnemySprite:material:shader_param/radius")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.165, 0.627, 1.881, 2.673 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 15.0, 5.0, 0.0 ]
+}
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 279.682
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 6 )
+shader_param/radius = 1.66644
+
+[sub_resource type="SpriteFrames" id=4]
+animations = [ {
+"frames": [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ) ],
+"loop": false,
+"name": "Evolving",
+"speed": 5.0
+} ]
+
+[node name="Enemy" type="Node2D"]
+scale = Vector2( 0.25, 0.25 )
+script = ExtResource( 5 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="FireTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="EnemyKinematicBody2D" type="KinematicBody2D" parent="."]
+collision_layer = 4
+collision_mask = 9
+script = ExtResource( 4 )
+
+[node name="Evolve" type="AnimationPlayer" parent="EnemyKinematicBody2D"]
+anims/Evolving = SubResource( 1 )
+
+[node name="EnemyCollisionShape2D" type="CollisionShape2D" parent="EnemyKinematicBody2D"]
+shape = SubResource( 2 )
+
+[node name="EnemySprite" type="AnimatedSprite" parent="EnemyKinematicBody2D"]
+material = SubResource( 3 )
+frames = SubResource( 4 )
+animation = "Evolving"
+frame = 2
+
+[node name="LaserPosition" type="Position2D" parent="EnemyKinematicBody2D"]
+
+[node name="StaticSprite" type="Sprite" parent="EnemyKinematicBody2D"]
+texture = ExtResource( 1 )
+
+[connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]
+[connection signal="timeout" from="FireTimer" to="." method="_on_FireTimer_timeout"]
