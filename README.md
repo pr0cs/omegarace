@@ -1,9 +1,8 @@
 # OmegaRace
 #### A simple Godot project to learn how to use gdscript and the Godot engine to recreate the legacy
 #### game from the Vic20/C64/Amiga era "OmegaRace"
-<a href="https://en.wikipedia.org/wiki/Omega_Race">
-  <img src="https://en.wikipedia.org/wiki/Omega_Race#/media/File:Omega_Race_(2).jpg" align="left" height="48">
-</a>
+
+![image](https://en.wikipedia.org/wiki/Omega_Race#/media/File:Omega_Race_(2).jpg)
 
 ## Jun 15, 2021
 #### Working:
