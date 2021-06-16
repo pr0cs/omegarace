@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/mine2.png" type="Texture" id=1]
+[ext_resource path="res://assets/mine1.png" type="Texture" id=2]
+[ext_resource path="res://scripts/Mine.gd" type="Script" id=3]
+[ext_resource path="res://scripts/EnemyMine.gd" type="Script" id=4]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 2 ), ExtResource( 1 ) ],
+"loop": true,
+"name": "blink",
+"speed": 6.0
+} ]
+
+[node name="EnemyMine" type="Node2D"]
+scale = Vector2( 0.25, 0.25 )
+script = ExtResource( 3 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 1 )
+animation = "blink"
+playing = true
+
+[node name="EnemyMineBody2D" type="KinematicBody2D" parent="."]
+position = Vector2( -73.4162, 128.812 )
+collision_layer = 32
+collision_mask = 9
+script = ExtResource( 4 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyMineBody2D"]
+polygon = PoolVector2Array( 74.4958, -202.567, 111.104, -149.084, 151.917, -75.7571, 118.166, -66.062, 71.8261, -61.7413, 22.1662, -67.562, 2.41443, -77.092, 24.6662, -131.562 )

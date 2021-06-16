@@ -14,10 +14,14 @@ var scoreBox:Rect2
 var movingDirection = Scoreboard.EnemyDir.LEFT
 onready var move_tween = get_node("Tween")
 onready var enemyBullet = preload("res://scenes/EnemyBullet.tscn")
+onready var enemyMine = preload("res://scenes/Mine.tscn")
 onready var fireTimer = $FireTimer
 onready var evolveTimer = $EvolveTimer
+onready var mineTimer = $MineTimer
 export var fireTimeout:float = 3
+export var mineTimeout:float = 10
 export var evolveTimeoutFactor:int = 3
+signal final_form_evolution(mask_bit,mask_bit_flag)
 
 
 func _move(newDirection):
@@ -130,6 +134,12 @@ func _process(delta):
 		if(Scoreboard.get_current_wavetype()==Scoreboard.WaveType.BLITZ):
 			timeout *= 0.5 # blitz waves has enemy firing 50% more often		
 		fireTimer.start(timeout)
+	if(mineTimer.is_stopped()):
+		var mtimeout = mineTimeout
+		if(Scoreboard.get_current_wavetype()==Scoreboard.WaveType.BLITZ):
+			mtimeout *= 0.5 # blitz waves has enemy mining 50% more often		
+		mineTimer.start(mtimeout)
+		
 
 
 func _on_Tween_tween_completed(object, key):
@@ -173,23 +183,21 @@ func _on_FireTimer_timeout():
 func _on_EvolveTimer_timeout():
 	if evolved:
 		evolveTimer.stop()
-		var animSprite = get_node("EnemyKinematicBody2D/EnemySprite")
-		animSprite.hide()
-		var evolveAnim = get_node("EnemyKinematicBody2D/Evolve")
-		evolveAnim.stop()
-		var staticSprite = get_node("EnemyKinematicBody2D/StaticSprite")
-		staticSprite.hide()
-		var starSprite = get_node("EnemyKinematicBody2D/StarSprite")
-		starSprite.show()
-		var starAnim = get_node("EnemyKinematicBody2D/Star")
-		starAnim.play("Star")
+		emit_signal("final_form_evolution",1,true)
 		evolve_factor = 0 # no longer rotate at node level, rotation now handled at physics level
 		fireTimeout /=2
-		#change mask to allow wall collision
-		var physBody =get_node("EnemyKinematicBody2D")
-		physBody.set_collision_mask_bit(1,true)
-		physBody.setEvolved()
 		
-		
-		
-	
+
+func _on_MineTimer_timeout():
+	if not evolved:
+		var minePct = 10
+		var waveModifier = (Scoreboard.wave / 15.0) + 1.0
+		minePct *= waveModifier
+		if minePct > 100:
+			minePct = 100	
+		var mineTest = Scoreboard.randi(100)
+		print("mine probability:",minePct," actual:",mineTest)
+		if(mineTest < minePct):
+			var mine = enemyMine.instance() as Node2D
+			mine.position = position
+			get_parent().add_child(mine)
