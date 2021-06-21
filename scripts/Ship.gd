@@ -1,4 +1,4 @@
-extends Node2D
+class_name Ship extends Node2D
 
 var bulletScene = preload("res://scenes/Bullet.tscn")
 onready var _ship_body = $ShipPhysics

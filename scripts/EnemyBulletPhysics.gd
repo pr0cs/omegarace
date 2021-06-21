@@ -26,7 +26,7 @@ func _physics_process(delta):
 				_collisionResult.collider.player_collision(_collisionResult)
 		queue_free()
 
-func has_been_shot():
+func has_been_shot(unused):
 	print("enemy bullet destroyed")
-	Scoreboard.enemy_killed(self)
+	Scoreboard.enemy_killed(get_parent())
 	queue_free()

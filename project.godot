@@ -8,6 +8,52 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Bullet",
+"language": "GDScript",
+"path": "res://scripts/Bullet.gd"
+}, {
+"base": "RigidBody2D",
+"class": "Chunk",
+"language": "GDScript",
+"path": "res://scripts/Chunk.gd"
+}, {
+"base": "Node2D",
+"class": "Chunkable",
+"language": "GDScript",
+"path": "res://scripts/Chunkable.gd"
+}, {
+"base": "Chunkable",
+"class": "Enemy",
+"language": "GDScript",
+"path": "res://scripts/Enemy.gd"
+}, {
+"base": "Node2D",
+"class": "EnemyBullet",
+"language": "GDScript",
+"path": "res://scripts/EnemyBullet.gd"
+}, {
+"base": "Node2D",
+"class": "Ship",
+"language": "GDScript",
+"path": "res://scripts/Ship.gd"
+}, {
+"base": "Chunkable",
+"class": "Star",
+"language": "GDScript",
+"path": "res://scripts/Star.gd"
+} ]
+_global_script_class_icons={
+"Bullet": "",
+"Chunk": "",
+"Chunkable": "",
+"Enemy": "",
+"EnemyBullet": "",
+"Ship": "",
+"Star": ""
+}
+
 [application]
 
 config/name="OmegaRace"

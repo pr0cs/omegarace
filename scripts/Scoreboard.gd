@@ -81,15 +81,12 @@ func set_wave(value:int) -> void:
 	emit_signal("wave_updated")
 	return
 
-func enemy_killed(enemy:KinematicBody2D) -> void:
-	var value = enemy.get_parent().get_score_value()
-	set_score(score+value)
-	emit_signal("enemy_killed",enemy.get_parent())
 
-func enemy_destroyed(enemy:Node2D) -> void:
+func enemy_killed(enemy:Node2D) -> void:
 	var value = enemy.get_score_value()
 	set_score(score+value)
 	emit_signal("enemy_killed",enemy)
+
 	
 func randomize() -> void:
 	rng.randomize()

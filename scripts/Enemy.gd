@@ -1,8 +1,7 @@
-extends Node2D
+class_name Enemy extends Chunkable
 
 var velocity = Vector2()
 export var rotation_speed = 100
-var direction = Vector2.ZERO
 var body_size = Vector2.ZERO
 var evolve_time:float = 0
 var cur_evolve:float=0
@@ -14,6 +13,7 @@ var scoreBox:Rect2
 var movingDirection = Scoreboard.EnemyDir.LEFT
 onready var move_tween = get_node("Tween")
 onready var enemyBullet = preload("res://scenes/EnemyBullet.tscn")
+var starScene : PackedScene = preload("res://scenes/Star.tscn")
 onready var enemyMine = preload("res://scenes/Mine.tscn")
 onready var fireTimer = $FireTimer
 onready var evolveTimer = $EvolveTimer
@@ -21,7 +21,18 @@ onready var mineTimer = $MineTimer
 export var fireTimeout:float = 3
 export var mineTimeout:float = 10
 export var evolveTimeoutFactor:int = 3
-signal final_form_evolution(mask_bit,mask_bit_flag)
+signal create_shockwave(target_position)
+signal enemy_evolved(original, new)
+
+func _ready():
+	setPose("E")
+	setBodyInitialVisibility()
+
+func isEvolving()->bool:
+	return evolving
+
+func get_score_value()->int:
+	return 5
 
 
 func _move(newDirection):
@@ -94,8 +105,8 @@ func _set_body_size(_bs:Vector2):
 	body_size = _bs;
 func _set_scorebox_rect(sbr:Rect2):
 	scoreBox=sbr
-	var starSprite = get_node("EnemyKinematicBody2D/StarSprite")
-	starSprite.hide()
+	var animation:AnimationPlayer = get_node("KinematicBody2D/Animation")
+	animation.play("Static")
 
 func setHyper()->void:
 	isHyper = true
@@ -104,18 +115,11 @@ func _set_evolve_time(_evolve:float):
 	evolving=true
 	evolve_time=_evolve
 	cur_evolve=0
-	var animSprite = get_node("EnemyKinematicBody2D/EnemySprite")
-	animSprite.show()
-	var evolveAnim = get_node("EnemyKinematicBody2D/Evolve")
-	evolveAnim.play("Evolving")
-	var staticSprite = get_node("EnemyKinematicBody2D/StaticSprite")
-	staticSprite.hide()
+	var animation:AnimationPlayer = get_node("KinematicBody2D/Animation")
+	animation.play("Evolve")
 	
-func is_evolving()->bool:
-	return evolving
-
-func get_score_value()->int:
-	return 5
+	
+	
 	
 func _process(delta):
 	if(evolving and not evolved):
@@ -155,10 +159,8 @@ func _on_Tween_tween_completed(object, key):
 
 func shoot():
 	var shootPct = 10 # 10% chance every timeout to shoot
-	if evolving and not evolved:
+	if evolving:
 		shootPct += 10 # another 10% chance if the enemy is evolving
-	if evolved:
-		shootPct += 30 # another 30% chance if the enemy is fully evolved
 	var waveModifier = (Scoreboard.wave / 15.0) + 1.0
 	shootPct *= waveModifier
 	if shootPct > 100:
@@ -168,11 +170,7 @@ func shoot():
 		print ("enemy chance to shoot % :",shootPct," shootTest:",shootTest)
 		var bullet = enemyBullet.instance() as Node2D
 		get_parent().add_child(bullet)
-		var physBody =get_node("EnemyKinematicBody2D")
-		if(physBody.hasEvolved()):
-			bullet.global_position = physBody.global_position
-		else:
-			bullet.global_position = global_position
+		bullet.global_position = global_position
 		var bPhys = bullet.get_node("EnemyBulletPhysics")
 		bPhys.direction = (Scoreboard.get_player_position() - global_position ).normalized()
 		bullet.rotation = global_position.angle_to_point(Scoreboard.get_player_position())
@@ -180,15 +178,23 @@ func shoot():
 func _on_FireTimer_timeout():
 	shoot()
 
+
 func _on_EvolveTimer_timeout():
 	if evolved:
 		evolveTimer.stop()
-		emit_signal("final_form_evolution",1,true)
-		evolve_factor = 0 # no longer rotate at node level, rotation now handled at physics level
-		fireTimeout /=2
+		var starEnemy = starScene.instance()
+		starEnemy.position = position
+		starEnemy.get_node("KinematicBody2D").direction = (Scoreboard.get_player_position() - global_position ).normalized()
+		var animation:AnimationPlayer = starEnemy.get_node("KinematicBody2D/Animation")
+		animation.play("Morph")
+		get_parent().add_child(starEnemy)
+		emit_signal("enemy_evolved",self,starEnemy)
+		queue_free()		
 		
 
 func _on_MineTimer_timeout():
+	if true:#DEBUG
+		return
 	if not evolved:
 		var minePct = 10
 		var waveModifier = (Scoreboard.wave / 15.0) + 1.0

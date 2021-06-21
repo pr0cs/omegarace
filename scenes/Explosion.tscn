@@ -1,0 +1,123 @@
+[gd_scene load_steps=7 format=2]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.446417, 0.628906 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.113281 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0, 0.805825, 1 )
+colors = PoolColorArray( 0.0703125, 0.0703125, 0.0703125, 1, 0.195313, 0.195313, 0.195313, 1, 1, 1, 1, 0 )
+
+[sub_resource type="CanvasItemMaterial" id=3]
+blend_mode = 1
+light_mode = 1
+
+[sub_resource type="Gradient" id=4]
+offsets = PoolRealArray( 0, 0.805825, 1 )
+colors = PoolColorArray( 1, 0, 0, 1, 0.889923, 0.941406, 0, 1, 1, 1, 1, 0 )
+
+[sub_resource type="Gradient" id=5]
+offsets = PoolRealArray( 0, 0.805825, 1 )
+colors = PoolColorArray( 0, 0.320313, 1, 1, 0.0246429, 0.209556, 0.332031, 1, 1, 1, 1, 0 )
+
+[sub_resource type="Animation" id=6]
+resource_name = "Explode"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Particles2D:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("pieces:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("smoke:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[node name="explosion_fx" type="Node2D"]
+scale = Vector2( 3, 3 )
+
+[node name="smoke" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 25
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 75.0
+initial_velocity_random = 0.3
+angular_velocity = 50.0
+angular_velocity_random = 1.0
+linear_accel_random = 1.0
+radial_accel = 70.0
+radial_accel_random = 1.0
+damping = 100.0
+scale_amount = 8.0
+scale_amount_curve = SubResource( 1 )
+color_ramp = SubResource( 2 )
+
+[node name="Particles2D" type="CPUParticles2D" parent="."]
+material = SubResource( 3 )
+emitting = false
+amount = 200
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 75.0
+initial_velocity_random = 0.3
+angular_velocity = 50.0
+angular_velocity_random = 1.0
+linear_accel_random = 1.0
+radial_accel = 100.0
+radial_accel_random = 1.0
+damping = 100.0
+scale_amount = 4.0
+scale_amount_curve = SubResource( 1 )
+color_ramp = SubResource( 4 )
+
+[node name="pieces" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 50
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 20.0
+initial_velocity_random = 0.3
+angular_velocity = 50.0
+angular_velocity_random = 1.0
+linear_accel_random = 1.0
+radial_accel = 100.0
+radial_accel_random = 1.0
+damping = 100.0
+scale_amount = 2.0
+scale_amount_curve = SubResource( 1 )
+color_ramp = SubResource( 5 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Explode = SubResource( 6 )
