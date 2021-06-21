@@ -2,7 +2,27 @@
 #### A simple Godot project to learn how to use gdscript and the Godot engine to recreate the legacy
 #### game from the Vic20/C64/Amiga era "OmegaRace"
 
-![image](https://en.wikipedia.org/wiki/Omega_Race#/media/File:Omega_Race_(2).jpg)
+![image](https://github.com/pr0cs/omegarace/blob/adab911ef59f0553b1de1a7977316c91b6bcef3f/assets/Omega_Race_original.jpg)
+
+## Jun 21, 2021
+#### Working:
+1. Initial startup / menu
+1. basic game framework
+1. evolving enemy
+1. basic enemy behavior
+1. chunking
+1. generic explosions [basic]
+1. wave difficulty scaling and modes (hyper/horde/etc) [basic]
+
+#### Not-Working:
+1. game over screen and audio
+1. misc gameplay improvements [playtesting, balance]
+1. wave transition animation
+1. main screen music
+1. sound effects
+1. full screen scaling
+1. 2D lighting
+---
 
 ## Jun 15, 2021
 #### Working:
