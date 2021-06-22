@@ -13,11 +13,15 @@ var player:Node2D
 var enemyArray=[]
 var waveEnemyCount:int = 2
 var waveEvolveCount:int = 1
+var nebulaShader:ShaderMaterial
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Scoreboard.randomize()
+	var nebula:Sprite = get_node("Nebula")
+	nebulaShader = nebula.material
+
 	# default starting wave / lives are set in the ScoreUI
 	compute_scorebox_rect()
 	spawn_player()
@@ -52,6 +56,16 @@ func _on_Timer_timeout():
 	Scoreboard.wave+=1
 	respawn_player()
 
+func setNebulaScene()->void:
+	nebulaShader.set_shader_param("octaves",Scoreboard.randi_range(3,7))
+	nebulaShader.set_shader_param("x_offset",0)
+	nebulaShader.set_shader_param("y_offset",0)
+	nebulaShader.set_shader_param("nebula_seed",Scoreboard.randi_range(4,50))
+	nebulaShader.set_shader_param("star_density",Scoreboard.randi_range(2,50))
+	var vpSize = Scoreboard.randi_range(150,1920)
+	var vp = Vector2(vpSize,vpSize)
+	nebulaShader.set_shader_param("viewport_size",vp)
+	
 func respawn_player():
 	_remove_all_bullets()
 	print("respawn")
@@ -89,6 +103,7 @@ func find_next_non_evolving_enemy() -> Node2D:
 	return null
 
 func spawn_player():
+	setNebulaScene()
 	player = playerScene.instance() as Node2D
 	var playerSpawnPosition:Position2D = get_node("PlayerSpawn")
 	player.global_position = playerSpawnPosition.position
@@ -182,4 +197,11 @@ func show_bullet_collision(collisionResult:KinematicCollision2D):
 	get_parent().add_child(coll)
 	
 
+func _process(delta):
+	var xofs = nebulaShader.get_shader_param("x_offset")
+	xofs+=delta
+	var yofs = nebulaShader.get_shader_param("y_offset")
+	yofs+=delta*3	
+	nebulaShader.set_shader_param("x_offset",xofs)
+	nebulaShader.set_shader_param("y_offset",yofs)
 

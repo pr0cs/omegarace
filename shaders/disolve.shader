@@ -10,6 +10,7 @@ void fragment(){
 	COLOR = vec4(mix(color.rgb, vec3(brightness), flashState),color.a);
 	
 	float noise_val = texture(noise, UV).r;
+	
 	if (noise_val < dissolveState)
 		COLOR.a = 0.0;
 	//COLOR.rgb = vec3(noise_val);

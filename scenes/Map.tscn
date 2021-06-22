@@ -1,15 +1,14 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://scripts/Map.gd" type="Script" id=1]
 [ext_resource path="res://scenes/ScoreUI.tscn" type="PackedScene" id=2]
 [ext_resource path="res://shaders/linerand.shader" type="Shader" id=3]
 [ext_resource path="res://shaders/nebula.shader" type="Shader" id=4]
-[ext_resource path="res://scenes/Explosion.tscn" type="PackedScene" id=5]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 4 )
-shader_param/octaves = 5
-shader_param/viewport_size = Vector2( 800, 600 )
+shader_param/octaves = 7
+shader_param/viewport_size = Vector2( 700, 800 )
 shader_param/x_offset = 0.0
 shader_param/y_offset = 0.0
 shader_param/star_density = 16.0
@@ -209,9 +208,5 @@ position = Vector2( 1113.46, 97.2957 )
 [node name="WaveRestartTimer" type="Timer" parent="."]
 wait_time = 5.0
 one_shot = true
-
-[node name="Effects" type="Node2D" parent="."]
-
-[node name="explosion_fx" parent="Effects" instance=ExtResource( 5 )]
 
 [connection signal="timeout" from="WaveRestartTimer" to="." method="_on_Timer_timeout"]
