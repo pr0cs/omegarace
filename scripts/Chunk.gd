@@ -10,5 +10,5 @@ func set_cut(cut_position) -> void:
 	parts.play("Exploding")
 
 
-func _on_Exploding_animation_finished(anim_name):
+func _on_Exploding_animation_finished(_anim_name):
 	queue_free()

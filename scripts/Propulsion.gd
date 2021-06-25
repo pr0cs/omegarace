@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 onready var _animated_sprite = $ShipSprite
 onready var _engine_particles = $Engine
+#onready var shipExplosion: PackedScene = preload("res://scenes/ShipExplosion.tscn")
 
 var velocity = Vector2()
 export var move_speed = 250
@@ -10,6 +11,7 @@ export var deceleration_factor = 0.3
 
 var rotate_speed = 0
 var thrusting = false
+var explosion;
 
 
 # external funcs
@@ -21,11 +23,13 @@ func _glide():
 func _get_velocity():
 	return velocity.length()
 	
+func prepare_to_warp():
+	deceleration_factor = 1.5
 
 func _turn_ship(relative:int):
 	#print(relative)
 	if abs(relative)>5:
-		rotate_speed+=relative/3
+		rotate_speed+=relative/3.0
 		if(rotate_speed>500):
 			rotate_speed=500
 		elif(rotate_speed<-500):
@@ -65,7 +69,7 @@ func _physics_process(delta):
 	if(collisionResult):
 		if(collisionResult.collider is KinematicBody2D):
 			print("Player collided with ",collisionResult.collider.name)
-			var body:KinematicBody2D = collisionResult.collider;
+			#var body:KinematicBody2D = collisionResult.collider;
 			# we can assume that ANY sort of collision at this point
 			# will have some sort of effect on the player
 			player_collision(collisionResult)
@@ -76,7 +80,15 @@ func _physics_process(delta):
 			# rotating against the same surface in the next frame
 			rotate_speed=0
 
-func player_collision(collisionResult:KinematicCollision2D):
+
+func player_collision(_collisionResult:KinematicCollision2D)->void:
+	#explosion = shipExplosion.instance()
+	#get_parent().add_child(explosion)
+	#var explodeAnim:AnimationPlayer = explosion.get_node("AnimationPlayer")
+	#explodeAnim.connect("animation_finished",self,"remove_explosion")
+	#explosion.get_node("AnimationPlayer").play("Explode")
 	# Display explosion?
-	print ("Show ship explosion")
+	
+	print ("Show ship explosion")	
 	Scoreboard.lives -=1
+	

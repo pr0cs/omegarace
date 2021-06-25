@@ -146,7 +146,7 @@ func _process(delta):
 		
 
 
-func _on_Tween_tween_completed(object, key):
+func _on_Tween_tween_completed(_object, _key):
 	match movingDirection:
 		Scoreboard.EnemyDir.LEFT:
 			_move(Scoreboard.EnemyDir.UP)

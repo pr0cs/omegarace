@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scripts/Ship.gd" type="Script" id=1]
 [ext_resource path="res://assets/lightfighter0006.png" type="Texture" id=2]
 [ext_resource path="res://assets/bullet.png" type="Texture" id=3]
+[ext_resource path="res://assets/enemylight.png" type="Texture" id=4]
 [ext_resource path="res://scripts/Propulsion.gd" type="Script" id=13]
 
 [sub_resource type="SpriteFrames" id=1]
@@ -73,6 +74,15 @@ amount = 25
 lifetime = 0.5
 process_material = SubResource( 7 )
 texture = ExtResource( 3 )
+
+[node name="Light2D" type="Light2D" parent="ShipPhysics/Engine"]
+position = Vector2( 98, -6 )
+rotation = -3.14159
+scale = Vector2( 2, 2 )
+texture = ExtResource( 4 )
+texture_scale = 0.5
+color = Color( 1, 1, 1, 0.439216 )
+energy = 1.61
 
 [node name="ShipCollisionPoly" type="CollisionPolygon2D" parent="ShipPhysics"]
 polygon = PoolVector2Array( -51.5127, 7.0558, 4.86511, 24.8225, 19.9691, 37.2274, 61.5752, 42.6939, 23.6399, 9.86319, 35.9872, 0.519302, 24.3073, -12.4954, 62.0166, -42.1956, 20.3028, -37.5237, 5.91034, -24.9871, -50.9515, -8.09742, -53.4472, 0.185593 )

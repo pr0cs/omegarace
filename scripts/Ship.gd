@@ -27,3 +27,6 @@ func _unhandled_input(event):
 
 func _on_FireTimer_timeout():
 	canFire=true
+
+func prepare_to_warp():
+	_ship_body.prepare_to_warp()

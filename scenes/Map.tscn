@@ -1,29 +1,33 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://scripts/Map.gd" type="Script" id=1]
 [ext_resource path="res://scenes/ScoreUI.tscn" type="PackedScene" id=2]
 [ext_resource path="res://shaders/linerand.shader" type="Shader" id=3]
 [ext_resource path="res://shaders/nebula.shader" type="Shader" id=4]
+[ext_resource path="res://shaders/shockwave.shader" type="Shader" id=5]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 4 )
-shader_param/octaves = 7
-shader_param/viewport_size = Vector2( 700, 800 )
+shader_param/octaves = 6
+shader_param/viewport_size = Vector2( 800, 800 )
 shader_param/x_offset = 0.0
 shader_param/y_offset = 0.0
-shader_param/star_density = 16.0
+shader_param/star_density = 18.467
 shader_param/star_brightness = 0.5
-shader_param/nebula_seed = 34
+shader_param/nebula_seed = 32
 
-[sub_resource type="NoiseTexture" id=2]
+[sub_resource type="OpenSimplexNoise" id=2]
 
-[sub_resource type="Gradient" id=3]
+[sub_resource type="NoiseTexture" id=3]
+noise = SubResource( 2 )
+
+[sub_resource type="Gradient" id=4]
 colors = PoolColorArray( 1, 1, 1, 1, 0, 0, 0, 1 )
 
-[sub_resource type="GradientTexture" id=4]
-gradient = SubResource( 3 )
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
 
-[sub_resource type="ParticlesMaterial" id=5]
+[sub_resource type="ParticlesMaterial" id=6]
 lifetime_randomness = 1.0
 emission_shape = 2
 emission_box_extents = Vector3( 640, 360, 1 )
@@ -37,47 +41,82 @@ tangential_accel = -48.84
 angle = 720.0
 scale = 3.0
 scale_random = 1.0
-color_ramp = SubResource( 4 )
+color_ramp = SubResource( 5 )
 
-[sub_resource type="SegmentShape2D" id=6]
+[sub_resource type="ShaderMaterial" id=7]
+shader = ExtResource( 5 )
+shader_param/center = Vector2( 0.453, 0.499 )
+shader_param/force = 0.455
+shader_param/size = 0.284
+shader_param/thickness = 0.0
+
+[sub_resource type="Animation" id=8]
+resource_name = "Wormhole"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("WarpLayer:material:shader_param/force")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.375, 0.12 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("WarpLayer:material:shader_param/size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.175, 0.058 ]
+}
+
+[sub_resource type="SegmentShape2D" id=9]
 a = Vector2( 1, 1 )
 b = Vector2( 1, 719 )
 
-[sub_resource type="SegmentShape2D" id=7]
+[sub_resource type="SegmentShape2D" id=10]
 a = Vector2( 1279, 1 )
 b = Vector2( 1279, 719 )
 
-[sub_resource type="SegmentShape2D" id=8]
+[sub_resource type="SegmentShape2D" id=11]
 a = Vector2( 1, 1 )
 b = Vector2( 1279, 1 )
 
-[sub_resource type="SegmentShape2D" id=9]
+[sub_resource type="SegmentShape2D" id=12]
 a = Vector2( 1, 719 )
 b = Vector2( 1279, 719 )
 
-[sub_resource type="SegmentShape2D" id=10]
+[sub_resource type="SegmentShape2D" id=13]
 a = Vector2( -200, -50 )
 b = Vector2( 200, -50 )
 
-[sub_resource type="ShaderMaterial" id=11]
+[sub_resource type="ShaderMaterial" id=14]
 shader = ExtResource( 3 )
 shader_param/square_size = 0.05
 shader_param/from = Color( 0.2, 0.2, 0.6, 1 )
 shader_param/to = Color( 0.4, 1, 1, 1 )
 
-[sub_resource type="SegmentShape2D" id=12]
+[sub_resource type="SegmentShape2D" id=15]
 a = Vector2( -200, 50 )
 b = Vector2( 200, 50 )
 
-[sub_resource type="SegmentShape2D" id=13]
+[sub_resource type="SegmentShape2D" id=16]
 a = Vector2( -200, -50 )
 b = Vector2( -200, 50 )
 
-[sub_resource type="SegmentShape2D" id=14]
+[sub_resource type="SegmentShape2D" id=17]
 a = Vector2( 200, -50 )
 b = Vector2( 200, 50 )
 
-[sub_resource type="ShaderMaterial" id=15]
+[sub_resource type="ShaderMaterial" id=18]
 shader = ExtResource( 3 )
 shader_param/square_size = 0.05
 shader_param/from = Color( 0.2, 0.2, 0.6, 1 )
@@ -90,7 +129,10 @@ script = ExtResource( 1 )
 material = SubResource( 1 )
 position = Vector2( 642.172, 360.33 )
 scale = Vector2( 2.50509, 1.40414 )
-texture = SubResource( 2 )
+texture = SubResource( 3 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Starfield" type="Particles2D" parent="."]
 position = Vector2( 640, 360 )
@@ -99,36 +141,68 @@ lifetime = 50.0
 speed_scale = 14.08
 randomness = 0.68
 visibility_rect = Rect2( -300, -100, 600, 200 )
-process_material = SubResource( 5 )
+process_material = SubResource( 6 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="WarpLayer" type="ColorRect" parent="CanvasLayer"]
+visible = false
+material = SubResource( 7 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Warp" type="AnimationPlayer" parent="CanvasLayer"]
+anims/Wormhole = SubResource( 8 )
 
 [node name="WestBody" type="StaticBody2D" parent="."]
 collision_layer = 2
 collision_mask = 25
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="WestShape" type="CollisionShape2D" parent="WestBody"]
-shape = SubResource( 6 )
+shape = SubResource( 9 )
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="EastBody" type="StaticBody2D" parent="."]
 collision_layer = 2
 collision_mask = 25
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="EastShape" type="CollisionShape2D" parent="EastBody"]
-shape = SubResource( 7 )
+shape = SubResource( 10 )
 
 [node name="NorthBody" type="StaticBody2D" parent="."]
 collision_layer = 2
 collision_mask = 25
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="NorthShape" type="CollisionShape2D" parent="NorthBody"]
 position = Vector2( 1, 0 )
-shape = SubResource( 8 )
+shape = SubResource( 11 )
 
 [node name="SouthBody" type="StaticBody2D" parent="."]
 collision_layer = 2
 collision_mask = 25
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="SouthShape" type="CollisionShape2D" parent="SouthBody"]
-shape = SubResource( 9 )
+shape = SubResource( 12 )
 
 [node name="ScoreNorthBody" type="StaticBody2D" parent="."]
 collision_layer = 2
@@ -136,10 +210,10 @@ collision_mask = 25
 
 [node name="ScoreNorthShape" type="CollisionShape2D" parent="ScoreNorthBody"]
 position = Vector2( 640, 360 )
-shape = SubResource( 10 )
+shape = SubResource( 13 )
 
 [node name="Line2D" type="Line2D" parent="ScoreNorthBody/ScoreNorthShape"]
-material = SubResource( 11 )
+material = SubResource( 14 )
 points = PoolVector2Array( -200, -50, 200, -50 )
 width = 3.0
 default_color = Color( 1, 1, 1, 1 )
@@ -152,10 +226,10 @@ collision_mask = 25
 
 [node name="ScoreSouthShape" type="CollisionShape2D" parent="ScoreSouthBody"]
 position = Vector2( 640, 360 )
-shape = SubResource( 12 )
+shape = SubResource( 15 )
 
 [node name="Line2D" type="Line2D" parent="ScoreSouthBody/ScoreSouthShape"]
-material = SubResource( 11 )
+material = SubResource( 14 )
 position = Vector2( 0, 100 )
 points = PoolVector2Array( -200, -50, 200, -50 )
 width = 3.0
@@ -168,10 +242,10 @@ collision_mask = 25
 
 [node name="ScoreWestShape" type="CollisionShape2D" parent="ScoreWestBody"]
 position = Vector2( 640, 360 )
-shape = SubResource( 13 )
+shape = SubResource( 16 )
 
 [node name="Line2D" type="Line2D" parent="ScoreWestBody/ScoreWestShape"]
-material = SubResource( 11 )
+material = SubResource( 14 )
 position = Vector2( 0, 100 )
 points = PoolVector2Array( -200, -150, -200, -50 )
 width = 3.0
@@ -184,10 +258,10 @@ collision_mask = 25
 
 [node name="ScoreEastShape" type="CollisionShape2D" parent="ScoreEastBody"]
 position = Vector2( 640, 360 )
-shape = SubResource( 14 )
+shape = SubResource( 17 )
 
 [node name="Line2D" type="Line2D" parent="ScoreEastBody/ScoreEastShape"]
-material = SubResource( 15 )
+material = SubResource( 18 )
 position = Vector2( 0, 100 )
 points = PoolVector2Array( 200, -150, 200, -50 )
 width = 3.0

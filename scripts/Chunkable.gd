@@ -36,7 +36,7 @@ func setBodyInitialVisibility()->void:
 # handle situation where chunkable body has been hit by a bullet
 # create an explosion, create sprite chunks by resizing the sprite image down 25%
 # then build solid bodies using that new texture to create an effect of the ship being torn to pieces
-func on_got_hit(collision_position):
+func on_got_hit(_collision_position):
 	var bodyPosition:Vector2 = position
 	if(usesPhysics()):
 		# if this chunkable object uses physics then its position MUST be retrieved from the physic body
@@ -53,7 +53,7 @@ func on_got_hit(collision_position):
 		img.resize(150,150)
 	visible=false
 	#emit_signal("create_shockwave",collision_position)
-	var offset: Vector2
+	var offset: Vector2 = Vector2.ZERO
 	var chunk_sprite_cut_start = Vector2(0,0)
 	for _x in range(0,6):
 		for _y in range(0,6):
