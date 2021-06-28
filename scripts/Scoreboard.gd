@@ -35,18 +35,24 @@ func get_player_position()->Vector2:
 	
 func get_random_wavetype() -> int:
 	if wave < 5:
+		print("Wave:Easy/Normal")
 		return WaveType.NORMAL
 	else:
 		var chance = rng.randi() & 100
 		# this could feasibly look at the wave and get progressively harder
 		if( chance < 40):
+			print("Wave:Normal")
 			return WaveType.NORMAL
 		elif chance >39 and chance < 60:
+			print("Wave:Hyper")
 			return WaveType.HYPER
 		elif chance > 59 and chance < 80:
+			print("Wave:Horde")
 			return WaveType.HORDE
 		elif chance > 79:
+			print("Wave:Blitz")
 			return WaveType.BLITZ
+	print("Wave:Default Normal")
 	return WaveType.NORMAL
 	
 func set_current_wavetype(waveType:int) -> void:
@@ -96,3 +102,6 @@ func randi_range(start:int,end:int) -> int:
 
 func randi(end:int)->int:
 	return rng.randi()%end
+
+func randf_range(start:float,end:float) -> float:
+	return rng.randf_range(start,end)

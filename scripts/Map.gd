@@ -7,28 +7,30 @@ onready var cold = preload("res://scenes/MapBulletCollider.tscn")
 var playerScene = preload("res://scenes/Ship.tscn")
 var chunkScene : PackedScene = preload("res://scenes/Chunk.tscn")
 var warpScene : PackedScene = preload("res://scenes/Warp.tscn")
+var teleportScene : PackedScene = preload("res://scenes/Teleport.tscn")
+var shipExplodeScene : PackedScene = preload("res://scenes/ShipExplosion.tscn")
 
 #local vars
 var scoreBox:Rect2
 var player:Ship
 var enemyArray=[]
+var colliderArray=[]
 var waveEnemyCount:int = 2
 var waveEvolveCount:int = 1
 var nebulaShader:ShaderMaterial
 var warp:Node2D
+var explosionParticles = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Scoreboard.randomize()
 	var nebula:Sprite = get_node("Nebula")
 	nebulaShader = nebula.material
-
 	# default starting wave / lives are set in the ScoreUI
 	compute_scorebox_rect()
-	respawn_player()
-	#spawn_enemies()
+	respawn_player("start")
 	Scoreboard.connect("enemy_killed",self,"check_wave_complete")
-	Scoreboard.connect("player_died",self,"respawn_player")
+	Scoreboard.connect("player_died",self,"animate_death")
 
 func compute_scorebox_rect():
 	var _defaultPos:Vector2 = get_node("ScoreNorthBody/ScoreNorthShape").global_position
@@ -48,44 +50,55 @@ func compute_scorebox_rect():
 func _remove_all_bullets() ->void :
 	var kids = get_children()
 	for kid in kids:
+		#print(kid.name)
 		if "Bullet" in kid.name:
 			kid.queue_free()
 		
 func _on_Timer_timeout():
+	cleanup_colliders()
 	_remove_all_bullets()
 	warp = warpScene.instance()
 	warp.position = Scoreboard.get_player_position()
 	warp.rotation_degrees = Scoreboard.rotation-180.0
 	add_child(warp)
-	remove_child(player)
+	if(player!=null):
+		player.queue_free()
+		player=null
 	warp.visible = true
 	var warpAnimation:AnimationPlayer = warp.get_node("WarpAnimation")
 	warpAnimation.connect("animation_finished",self,"finished_wave")
 	warpAnimation.play("Warp")
 	
 func finished_wave(_animation)->void:
+	warp.queue_free()
 	Scoreboard.wave+=1
-	respawn_player()
+	explosionParticles=null;
+	respawn_player("start")
 	
 func start_next_wave(_animation)->void:
-	warp.visible = false
-	remove_child(warp)	
+	warp.queue_free()
 	start_new_wave()
 
 func setNebulaScene()->void:
-	if(Scoreboard.wave==1):
-		return
+	#if(Scoreboard.wave==1):
+	#	return
 	#nebulaShader.set_shader_param("octaves",Scoreboard.randi_range(5,7))
 	nebulaShader.set_shader_param("x_offset",0)
 	nebulaShader.set_shader_param("y_offset",0)
 	nebulaShader.set_shader_param("nebula_seed",Scoreboard.randi_range(4,50))
-	nebulaShader.set_shader_param("star_density",Scoreboard.randi_range(2,25))
+	nebulaShader.set_shader_param("star_density",Scoreboard.randi_range(2,15))
 	var vpSize = Scoreboard.randi_range(150,800)
 	var vp = Vector2(vpSize,vpSize)
 	nebulaShader.set_shader_param("viewport_size",vp)
 	
-func respawn_player()->void:
-	remove_child(player)
+func respawn_player(_unused)->void:
+	if(explosionParticles!=null):
+		explosionParticles.queue_free()
+	var cr:ColorRect = get_node("CanvasLayer/ShockwaveLayer")
+	cr.visible=false
+	if(player!=null):
+		player.queue_free()
+		player=null
 	_remove_all_bullets()
 	setNebulaScene()
 	spawn_enemies()
@@ -96,16 +109,18 @@ func respawn_player()->void:
 	warp.visible = true
 	var warpAnimation:AnimationPlayer = warp.get_node("WarpAnimation")
 	warpAnimation.connect("animation_finished",self,"start_next_wave")
-	warpAnimation.play("Warp",-1,-2.0,true)
+	warpAnimation.play("WarpIn")
 	
 func start_new_wave():
 	_remove_all_bullets()
 	if(!Scoreboard.isGameOver()):
-		remove_child(player)
+		if(player!=null):
+			player.queue_free()
+			player=null
 		spawn_player()
-		#spawn_enemies()
 	
 func check_wave_complete(destroyedEnemy:Node2D) ->void:
+	cleanup_colliders()
 	if(destroyedEnemy.has_method("doesnt_affect_wave")):
 		return;
 	var enemyCount = enemyArray.size()
@@ -139,43 +154,22 @@ func spawn_player():
 	var playerSpawnPosition:Position2D = get_node("PlayerSpawn")
 	player.global_position = playerSpawnPosition.position
 	add_child(player)
-	#var layer:ColorRect = get_node("CanvasLayer/WarpLayer")
-	#var shader:ShaderMaterial = layer.material
-	#var warpLocation:Vector2 = shader.get_shader_param("center")
-	#warpLocation.x = 2.0 * (player.global_position.x/OS.window_size.x) - 0.5
-	#warpLocation.y = player.global_position.y/OS.window_size.y
-	#print(warpLocation)
-	#warpLocation.x = player.global_position.x/layer.get_global_rect().size.x
-	#warpLocation.y = player.global_position.y/layer.get_global_rect().size.y
-	#print(warpLocation)
-	#shader.set_shader_param("center",warpLocation)
-	#var animation:AnimationPlayer = get_node("CanvasLayer/Warp")
-	#animation.connect("animation_finished",self,"begin_game")
-	#print("about to be visible")	
-	#layer.visible=true
-	#print("starting anim")
-	#animation.play("Wormhole")
-	#print("waiting")
 
 func begin_game(animation)->void:
-	print("playing?")
 	var layer:ColorRect = get_node("CanvasLayer/WarpLayer")
 	layer.visible=false
 	
-func spawn_enemy(enemy:Node2D,spriteName:String):
+func spawn_enemy(enemy:Node2D,spriteName:String,position:Vector2):
 	add_child(enemy)
 	var sprite:Sprite = enemy.get_node(spriteName)
 	var default_size = sprite.get_rect().size.x # assume all frames are the same size
 	default_size*=(enemy.scale/2) 
-	var xpos = Scoreboard.randi_range(default_size.x,OS.window_size.x-default_size.x)
-	var ypos = Scoreboard.randi_range(scoreBox.end.y+default_size.y,OS.window_size.y-default_size.y)
-	enemy.position.x=xpos;
-	enemy.position.y=ypos;
+	enemy.position.x=position.x;
+	enemy.position.y=position.y;
 	enemy._set_body_size(default_size)
 	enemy._set_scorebox_rect(scoreBox)
 	enemy._move(Scoreboard.EnemyDir.LEFT)
 	enemyArray.append(enemy)
-	enemy.connect("create_shockwave",self,"animate_shockwave")
 	enemy.connect("enemy_evolved",self, "update_enemy_array")
 
 func update_enemy_array(original,new)->void:
@@ -186,22 +180,77 @@ func update_enemy_array(original,new)->void:
 		return 
 	enemyArray.append(new)
 
-func animate_shockwave(shockwave_position)->void:
-	print("need shockwave")
-	#var cr:ColorRect = get_node("CanvasLayer/ColorRect")
-	#var ap:AnimationPlayer = get_node("Shockwave")
-	#var anim:Animation = ap.get_animation("Shockwave")
-	#var track = 2
-	#var last_key = anim.track_get_key_count(track) - 1
-	#var sposition = Vector2((shockwave_position.x/OS.window_size.x) , 1.0-(shockwave_position.y/OS.window_size.y))
-	#print("OS:",OS.window_size," POS:",shockwave_position," scl:",sposition)	
-	#anim.track_set_key_value(track,last_key,sposition)
-	#ap.play("Shockwave")
+func animate_death()->void:
+	var cr:ColorRect = get_node("CanvasLayer/ShockwaveLayer")
+	var ap:AnimationPlayer = get_node("CanvasLayer/Shockwave")
+	var vpSize = get_viewport().size
+	#var pPos = Scoreboard.get_player_position()#player.get_node("ShipPhysics").position
+	var sposition = Vector2((Scoreboard.get_player_position().x/vpSize.x)*2.0-0.5 , (Scoreboard.get_player_position().y/vpSize.y))
+	#print(Scoreboard.get_player_position(),":",pPos)
+	var shaderMat:ShaderMaterial = cr.material
+	shaderMat.set_shader_param("center",sposition)
+	cr.visible=true
+	ap.connect("animation_finished",self,"respawn_player")
+	if(player!=null):
+		explosionParticles = shipExplodeScene.instance()
+		explosionParticles.position = Scoreboard.get_player_position()
+		explosionParticles.rotation_degrees = Scoreboard.rotation - 180.0
+		var img:Image=null
+		var sprite:Sprite=null;
+		sprite = player.getSprite()
+		img = sprite.texture.get_data()
+		img.resize(150,150)
+		var shipTexture:Texture = ImageTexture.new()
+		shipTexture.create_from_image(img)
+		explosionParticles.get_node("Destruction").initialize(shipTexture)
+		#explosionParticles.get_node("Destruction").emitting = true
+		explosionParticles.get_node("Explosion").play("Explode")
+		add_child(explosionParticles)
+		player.queue_free()
+		player=null
+	ap.play("Shockwave")
+	
 
 	
+func teleport_enemy_in(evolver:bool) -> void:
+	var teleporter = teleportScene.instance()
+	var sprite:Sprite = teleporter.get_node("Enemy")
+	var default_size = sprite.get_rect().size.x 
+	default_size*=(sprite.scale/2)
+	# set up default spawn in position for enemy
+	var vpSize = OS.window_size
+	vpSize = get_viewport().size
+	var xpos = Scoreboard.randi_range(default_size.x,vpSize.x-default_size.x)
+	var ypos = Scoreboard.randi_range(scoreBox.end.y+default_size.y,vpSize.y-default_size.y)
+	teleporter.position.x=xpos;
+	teleporter.position.y=ypos;
+	add_child(teleporter)
+	teleporter.connect("enemy_teleported",self,"enemy_teleported_in")
+	teleporter.teleport_enemy_in(evolver)
+
+
+func enemy_teleported_in(teleportedEnemy)->void:
+	var enemyPosition = teleportedEnemy.position
+	#remove_child(teleportedEnemy)
+	teleportedEnemy.get_node("TeleportAnimation").stop()
+	var enemy:Enemy = enemyScene.instance()
+	spawn_enemy(enemy,"KinematicBody2D/E1",enemyPosition)
+	if(teleportedEnemy.evolver):
+		var minLife = 4
+		var maxLife = 10
+		enemy._set_evolve_time(Scoreboard.randi_range(minLife,maxLife))
+		waveEvolveCount-=1
+		var animation:AnimationPlayer = enemy.get_node("KinematicBody2D/Animation")
+		animation.play("Evolve")
+	else:
+		var animation:AnimationPlayer = enemy.get_node("KinematicBody2D/Animation")
+		animation.play("Static")
+	teleportedEnemy.queue_free()
+	
+
 func spawn_enemies() -> void :
 	for ec in enemyArray:
-		remove_child(ec)
+		ec.queue_free()
 	enemyArray.clear()
 	var waveType = Scoreboard.get_random_wavetype()
 	waveEnemyCount = Scoreboard.wave
@@ -220,19 +269,10 @@ func spawn_enemies() -> void :
 	Scoreboard.set_current_wavetype(waveType)
 	if(waveEnemyCount < 6):
 		waveEnemyCount = 6
+	#waveEnemyCount=3#DEBUG
 	for e in waveEnemyCount:
-		var enemy:Enemy = enemyScene.instance()
-		spawn_enemy(enemy,"KinematicBody2D/E1")
-		if(waveEvolveCount >0):
-			var minLife = 4
-			var maxLife = 10
-			enemy._set_evolve_time(Scoreboard.randi_range(minLife,maxLife))
-			waveEvolveCount-=1
-			var animation:AnimationPlayer = enemy.get_node("KinematicBody2D/Animation")
-			animation.play("Evolve")
-		else:
-			var animation:AnimationPlayer = enemy.get_node("KinematicBody2D/Animation")
-			animation.play("Static")
+		teleport_enemy_in((waveEvolveCount >0))
+		waveEvolveCount-=1
 
 ############################################################################		
 func show_bullet_collision(collisionResult:KinematicCollision2D):
@@ -247,8 +287,23 @@ func show_bullet_collision(collisionResult:KinematicCollision2D):
 	elif(body.name=="EastBody" or body.name=="ScoreWestBody"):
 		coll.rotation_degrees=180
 	coll.translate(collisionResult.position)
-	get_parent().add_child(coll)
+	colliderArray.append(coll)
+	add_child(coll)
 	
+func cleanup_colliders():
+	# this is needed because godot has no notion of 
+	# a signal for 'one shot' particles, so you have no idea
+	# if the particles are actually finished
+	if(!colliderArray.empty()):
+		var removedArray=[]
+		for c in colliderArray:
+			var parts = c.get_node("CollideParticles") as Particles2D
+			if(!parts.emitting):
+				c.queue_free()
+				removedArray.append(c)
+		for collider in removedArray:
+			colliderArray.erase(collider)
+			
 
 func _process(delta):
 	var xofs = nebulaShader.get_shader_param("x_offset")

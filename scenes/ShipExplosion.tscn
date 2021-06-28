@@ -1,0 +1,206 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://assets/pixel.png" type="Texture" id=1]
+[ext_resource path="res://scripts/Destruction.gd" type="Script" id=2]
+[ext_resource path="res://assets/lightfighter0006-proto.png" type="Texture" id=3]
+[ext_resource path="res://shaders/shipexplosion.shader" type="Shader" id=4]
+[ext_resource path="res://assets/Omega_Race_original.jpg" type="Texture" id=5]
+[ext_resource path="res://assets/line.png" type="Texture" id=6]
+[ext_resource path="res://assets/light.png" type="Texture" id=7]
+[ext_resource path="res://assets/fireball.png" type="Texture" id=8]
+
+[sub_resource type="ShaderMaterial" id=1]
+
+[sub_resource type="Curve" id=2]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.434783, 0.863636 ), -2.17454, -2.17454, 0, 0, Vector2( 0.945652, 0.327273 ), 4.79008, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=3]
+colors = PoolColorArray( 0, 0, 0, 0, 1, 1, 1, 0.411765 )
+
+[sub_resource type="Gradient" id=4]
+colors = PoolColorArray( 0, 0, 0, 1, 1, 1, 1, 0.286275 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
+
+[sub_resource type="Curve" id=6]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.992187, 0.11 ), -0.181346, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=7]
+curve = SubResource( 6 )
+
+[sub_resource type="ParticlesMaterial" id=8]
+lifetime_randomness = 0.37
+trail_divisor = 10
+trail_size_modifier = SubResource( 7 )
+trail_color_modifier = SubResource( 5 )
+emission_shape = 2
+emission_box_extents = Vector3( 22, 33, 1 )
+flag_disable_z = true
+spread = 180.0
+flatness = 1.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 79.71
+angular_velocity = -720.0
+angular_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = 100.0
+linear_accel_random = 1.0
+radial_accel = 100.0
+radial_accel_random = 1.0
+tangential_accel = 92.75
+tangential_accel_random = 0.99
+angle = 720.0
+angle_random = 1.0
+scale = 0.5
+scale_random = 1.0
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = ExtResource( 4 )
+shader_param/direction = Vector3( 1, 0, 0 )
+shader_param/spread = 44.435
+shader_param/flatness = 1.909
+shader_param/initial_linear_velocity = 1.0
+shader_param/initial_angle = 0.0
+shader_param/angular_velocity = 4.764
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 22.0
+shader_param/tangent_accel = 1.634
+shader_param/damping = 1.11
+shader_param/scale = 1.0
+shader_param/hue_variation = 0.0
+shader_param/anim_speed = 1.0
+shader_param/anim_offset = 0.0
+shader_param/initial_linear_velocity_random = 0.0
+shader_param/initial_angle_random = 0.0
+shader_param/angular_velocity_random = 0.0
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 1.649
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = 0.0
+shader_param/hue_variation_random = 0.0
+shader_param/anim_speed_random = 111.0
+shader_param/anim_offset_random = 0.0
+shader_param/lifetime_randomness = 0.0
+shader_param/emission_box_extents = Vector3( 55, 42, 1 )
+shader_param/color_value = Color( 1, 1, 1, 1 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, -1e-06, 0 )
+shader_param/sprite = ExtResource( 3 )
+
+[sub_resource type="Animation" id=10]
+resource_name = "Explode"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("fireball1:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Particles2D:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Destruction:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Light2D:energy")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 1.5, 3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 4.0, 1.0 ]
+}
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+visible = false
+texture = ExtResource( 5 )
+
+[node name="fireball1" type="CPUParticles2D" parent="."]
+material = SubResource( 1 )
+emitting = false
+amount = 150
+one_shot = true
+explosiveness = 1.0
+texture = ExtResource( 8 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 78.0
+initial_velocity_random = 0.3
+angular_velocity = 130.39
+angular_velocity_random = 1.0
+orbit_velocity = -0.05
+orbit_velocity_random = 1.0
+linear_accel = 4.72
+linear_accel_random = 1.0
+radial_accel = 100.0
+radial_accel_random = 1.0
+tangential_accel = 100.0
+tangential_accel_random = 1.0
+damping = 100.0
+angle = 720.0
+angle_random = 1.0
+scale_amount = 5.0
+scale_amount_random = 0.56
+scale_amount_curve = SubResource( 2 )
+color_ramp = SubResource( 3 )
+
+[node name="Particles2D" type="Particles2D" parent="."]
+amount = 500
+lifetime = 1.5
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource( 8 )
+texture = ExtResource( 6 )
+
+[node name="Destruction" type="Particles2D" parent="."]
+amount = 4000
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 9 )
+texture = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 7 )
+energy = 1.4
+range_height = 50.0
+
+[node name="Explosion" type="AnimationPlayer" parent="."]
+anims/Explode = SubResource( 10 )

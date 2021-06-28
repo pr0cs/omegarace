@@ -170,5 +170,6 @@ void vertex()
 
 void fragment()
 {
-	COLOR = mainImage(vtx,TIME);
+	COLOR = mainImage(vtx,TIME)*1.3;
+	NORMALMAP = vec3(0.5,0.5,1.0);
 }

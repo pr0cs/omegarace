@@ -30,3 +30,6 @@ func _on_FireTimer_timeout():
 
 func prepare_to_warp():
 	_ship_body.prepare_to_warp()
+
+func getSprite()->Sprite:
+	return _ship_body.get_node("ShipSprite")

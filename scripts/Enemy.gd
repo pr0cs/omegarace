@@ -39,48 +39,26 @@ func _move(newDirection):
 	var ex=0
 	var ey=0
 	var horizontal:bool=true
+	var vpSize = OS.window_size
+	vpSize = get_viewport().size
 	match newDirection:
 		Scoreboard.EnemyDir.LEFT:
-			ex = Scoreboard.randi_range(body_size.x,scoreBox.position.x-body_size.x)
-			ey = Scoreboard.randi_range(scoreBox.end.y+body_size.y,OS.window_size.y-body_size.y)
-			if(ex > position.x):
-				var temp = Vector2(position.x,position.y)
-				position.x = ex
-				position.x = ey
-				ex=temp.x
-				ey=temp.y
+			ex = Scoreboard.randi_range(body_size.x,min(scoreBox.position.x-body_size.x,position.x-body_size.x))
+			ey = Scoreboard.randi_range(scoreBox.end.y+body_size.y,vpSize.y-body_size.y)
 		Scoreboard.EnemyDir.UP:
 			ex = Scoreboard.randi_range(body_size.x,scoreBox.position.x-body_size.x)
-			ey = Scoreboard.randi_range(body_size.y,scoreBox.position.y-body_size.y)
+			ey = Scoreboard.randi_range(body_size.y,min(scoreBox.position.y-body_size.y,position.y-body_size.y))
 			horizontal=false
-			if(ey > position.y):
-				var temp = Vector2(position.x,position.y)
-				position.x = ex
-				position.x = ey
-				ex = temp.x
-				ey = temp.y
 		Scoreboard.EnemyDir.RIGHT:
-			ex = Scoreboard.randi_range(scoreBox.end.x+body_size.x,OS.window_size.x-body_size.x)
+			ex = Scoreboard.randi_range(max(scoreBox.end.x+body_size.x,position.x+body_size.x),vpSize.x-body_size.x)
 			ey = Scoreboard.randi_range(body_size.y,scoreBox.position.y-body_size.y)
-			if(ex < position.x):
-				var temp = Vector2(position.x,position.y)
-				position.x = ex
-				position.x = ey
-				ex=temp.x
-				ey=temp.y
 		Scoreboard.EnemyDir.DOWN:
-			ex = Scoreboard.randi_range(scoreBox.end.x+body_size.x,OS.window_size.x-body_size.x)
-			ey = Scoreboard.randi_range(scoreBox.end.y+body_size.y,OS.window_size.y-body_size.y)
-			if(ey < position.y):
-				var temp = Vector2(position.x,position.y)
-				position.x = ex
-				position.x = ey
-				ex = temp.x
-				ey = temp.y
+			ex = Scoreboard.randi_range(scoreBox.end.x+body_size.x,vpSize.x-body_size.x)
+			ey = Scoreboard.randi_range(max(scoreBox.end.y+body_size.y,position.y+body_size.y),vpSize.y-body_size.y)
 	movingDirection = newDirection
 	var target:Vector2 = Vector2(ex,ey)
 	var distance = target.distance_to(position)
-	var pct=distance / Vector2.ZERO.distance_to(OS.window_size)
+	var pct=distance / Vector2.ZERO.distance_to(vpSize)
 	var positionTime
 	if(horizontal):
 		positionTime=25 # 25 seconds to cross horizontal field, slowest
@@ -118,9 +96,6 @@ func _set_evolve_time(_evolve:float):
 	var animation:AnimationPlayer = get_node("KinematicBody2D/Animation")
 	animation.play("Evolve")
 	
-	
-	
-	
 func _process(delta):
 	if(evolving and not evolved):
 		var pct = 1
@@ -143,8 +118,6 @@ func _process(delta):
 		if(Scoreboard.get_current_wavetype()==Scoreboard.WaveType.BLITZ):
 			mtimeout *= 0.5 # blitz waves has enemy mining 50% more often		
 		mineTimer.start(mtimeout)
-		
-
 
 func _on_Tween_tween_completed(_object, _key):
 	match movingDirection:
@@ -170,14 +143,14 @@ func shoot():
 		print ("enemy chance to shoot % :",shootPct," shootTest:",shootTest)
 		var bullet = enemyBullet.instance() as Node2D
 		get_parent().add_child(bullet)
-		bullet.global_position = global_position
+		bullet.position = position
 		var bPhys = bullet.get_node("EnemyBulletPhysics")
-		bPhys.direction = (Scoreboard.get_player_position() - global_position ).normalized()
+		bPhys.direction = (Scoreboard.get_player_position() - position ).normalized()
+		print("bullet direction:",bPhys.direction)
 		bullet.rotation = global_position.angle_to_point(Scoreboard.get_player_position())
 
 func _on_FireTimer_timeout():
 	shoot()
-
 
 func _on_EvolveTimer_timeout():
 	if evolved:
@@ -186,15 +159,13 @@ func _on_EvolveTimer_timeout():
 		starEnemy.position = position
 		starEnemy.get_node("KinematicBody2D").direction = (Scoreboard.get_player_position() - global_position ).normalized()
 		var animation:AnimationPlayer = starEnemy.get_node("KinematicBody2D/Animation")
-		animation.play("Morph")
 		get_parent().add_child(starEnemy)
+		animation.play("Morph")
 		emit_signal("enemy_evolved",self,starEnemy)
 		queue_free()		
 		
 
 func _on_MineTimer_timeout():
-	if true:#DEBUG
-		return
 	if not evolved:
 		var minePct = 10
 		var waveModifier = (Scoreboard.wave / 15.0) + 1.0

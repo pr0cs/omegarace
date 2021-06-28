@@ -7,6 +7,7 @@ var expScene : PackedScene = preload("res://scenes/Explosion.tscn")
 # local / shared varibles
 var offset_value : float = 25
 var pose:String
+var explosion
 
 # enemies that use physics for movement MUST return true (star/morphed bodies)
 # so that its position is retrieved from the physics body
@@ -32,7 +33,7 @@ func setBodyInitialVisibility()->void:
 		nodeName+=getPose()
 		nodeName+="%d"%n
 		get_node(nodeName).visible=false
-	
+
 # handle situation where chunkable body has been hit by a bullet
 # create an explosion, create sprite chunks by resizing the sprite image down 25%
 # then build solid bodies using that new texture to create an effect of the ship being torn to pieces
@@ -41,9 +42,10 @@ func on_got_hit(_collision_position):
 	if(usesPhysics()):
 		# if this chunkable object uses physics then its position MUST be retrieved from the physic body
 		bodyPosition = get_node("KinematicBody2D").global_position
-	var explosion = expScene.instance()
+	explosion = expScene.instance()
 	explosion.position = bodyPosition
 	get_parent().add_child(explosion)
+	explosion.get_node("AnimationPlayer").connect("animation_finished",explosion,"explosion_finished")
 	explosion.get_node("AnimationPlayer").play("Explode")
 	var curSprite:Sprite = get_current_enemy_texture()
 	var img:Image=null

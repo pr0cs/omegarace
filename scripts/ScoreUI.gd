@@ -40,7 +40,7 @@ func player_death() -> void:
 	if(shipIconArray.size()>0):
 		var _deadShip = shipIconArray.pop_back()
 		if _deadShip!=null:
-			remove_child(_deadShip)
+			_deadShip.queue_free()
 			
 func update_interface() -> void:
 	score.text = "%s" % Scoreboard.score

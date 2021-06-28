@@ -1,9 +1,13 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://scripts/Ship.gd" type="Script" id=1]
 [ext_resource path="res://assets/lightfighter0006.png" type="Texture" id=2]
 [ext_resource path="res://assets/bullet.png" type="Texture" id=3]
 [ext_resource path="res://assets/enemylight.png" type="Texture" id=4]
+[ext_resource path="res://assets/pixel.png" type="Texture" id=5]
+[ext_resource path="res://scripts/Destruction.gd" type="Script" id=6]
+[ext_resource path="res://assets/lightfighter0006-proto.png" type="Texture" id=7]
+[ext_resource path="res://shaders/shipexplosion.shader" type="Shader" id=8]
 [ext_resource path="res://scripts/Propulsion.gd" type="Script" id=13]
 
 [sub_resource type="SpriteFrames" id=1]
@@ -48,6 +52,42 @@ scale = 5.0
 scale_curve = SubResource( 6 )
 color_ramp = SubResource( 4 )
 
+[sub_resource type="ShaderMaterial" id=8]
+shader = ExtResource( 8 )
+shader_param/direction = Vector3( 1, 0, 0 )
+shader_param/spread = 44.435
+shader_param/flatness = 0.0
+shader_param/initial_linear_velocity = 2.0
+shader_param/initial_angle = 0.0
+shader_param/angular_velocity = 0.0
+shader_param/orbit_velocity = 0.0
+shader_param/linear_accel = 0.0
+shader_param/radial_accel = 0.0
+shader_param/tangent_accel = 0.0
+shader_param/damping = 0.0
+shader_param/scale = 1.0
+shader_param/hue_variation = 0.0
+shader_param/anim_speed = 0.0
+shader_param/anim_offset = 0.0
+shader_param/initial_linear_velocity_random = 0.0
+shader_param/initial_angle_random = 0.0
+shader_param/angular_velocity_random = 0.0
+shader_param/orbit_velocity_random = 0.0
+shader_param/linear_accel_random = 0.0
+shader_param/radial_accel_random = 0.0
+shader_param/tangent_accel_random = 0.0
+shader_param/damping_random = 0.0
+shader_param/scale_random = 0.0
+shader_param/hue_variation_random = 0.0
+shader_param/anim_speed_random = 0.0
+shader_param/anim_offset_random = 0.0
+shader_param/lifetime_randomness = 0.0
+shader_param/emission_box_extents = Vector3( 55, 42, 1 )
+shader_param/color_value = Color( 1, 1, 1, 1 )
+shader_param/trail_divisor = 1
+shader_param/gravity = Vector3( 0, -1e-06, 0 )
+shader_param/sprite = ExtResource( 7 )
+
 [node name="Ship" type="Node2D"]
 script = ExtResource( 1 )
 fireTimeout = 0.3
@@ -59,7 +99,13 @@ script = ExtResource( 13 )
 [node name="Weapon" type="Position2D" parent="ShipPhysics"]
 position = Vector2( -58, 0 )
 
-[node name="ShipSprite" type="AnimatedSprite" parent="ShipPhysics"]
+[node name="ShipSprite" type="Sprite" parent="ShipPhysics"]
+rotation = -3.14159
+scale = Vector2( 0.25, 0.25 )
+texture = ExtResource( 2 )
+
+[node name="ShipSpriteOLD" type="AnimatedSprite" parent="ShipPhysics"]
+visible = false
 rotation = -3.14159
 scale = Vector2( 0.25, 0.25 )
 frames = SubResource( 1 )
@@ -81,8 +127,9 @@ rotation = -3.14159
 scale = Vector2( 2, 2 )
 texture = ExtResource( 4 )
 texture_scale = 0.5
-color = Color( 1, 1, 1, 0.439216 )
-energy = 1.61
+color = Color( 0.352941, 0.945098, 0.972549, 0.780392 )
+energy = 1.72
+range_height = 30.0
 
 [node name="ShipCollisionPoly" type="CollisionPolygon2D" parent="ShipPhysics"]
 polygon = PoolVector2Array( -51.5127, 7.0558, 4.86511, 24.8225, 19.9691, 37.2274, 61.5752, 42.6939, 23.6399, 9.86319, 35.9872, 0.519302, 24.3073, -12.4954, 62.0166, -42.1956, 20.3028, -37.5237, 5.91034, -24.9871, -50.9515, -8.09742, -53.4472, 0.185593 )
@@ -91,5 +138,13 @@ one_way_collision_margin = 128.0
 
 [node name="FireTimer" type="Timer" parent="ShipPhysics"]
 one_shot = true
+
+[node name="Destruction" type="Particles2D" parent="."]
+visible = false
+amount = 4000
+explosiveness = 1.0
+process_material = SubResource( 8 )
+texture = ExtResource( 5 )
+script = ExtResource( 6 )
 
 [connection signal="timeout" from="ShipPhysics/FireTimer" to="." method="_on_FireTimer_timeout"]

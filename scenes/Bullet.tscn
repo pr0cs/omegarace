@@ -14,18 +14,6 @@ collision_mask = 62
 collision/safe_margin = 1.0
 script = ExtResource( 2 )
 
-[node name="Light2D" type="Light2D" parent="."]
-position = Vector2( 0.41918, 0.421074 )
-scale = Vector2( 0.254908, 0.275644 )
-texture = ExtResource( 3 )
-color = Color( 0.00784314, 0.792157, 0.811765, 1 )
-energy = 3.89
-range_height = 1225.6
-shadow_enabled = true
-__meta__ = {
-"_edit_lock_": true
-}
-
 [node name="BulletShape" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
@@ -33,5 +21,11 @@ shape = SubResource( 1 )
 show_behind_parent = true
 position = Vector2( 0.30672, -0.315323 )
 rotation = -3.14159
-scale = Vector2( 0.254898, 0.174524 )
+scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 1 )
+
+[node name="Light2D" type="Light2D" parent="."]
+texture = ExtResource( 3 )
+color = Color( 0, 0.666667, 0.92549, 1 )
+energy = 2.93
+range_height = 50.0

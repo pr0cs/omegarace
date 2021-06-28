@@ -22,6 +22,7 @@ scale = Vector2( 0.428514, 0.428514 )
 texture = ExtResource( 5 )
 color = Color( 0.968627, 0.027451, 0.027451, 1 )
 energy = 3.44
+range_height = 50.0
 
 [node name="Sprite" type="Sprite" parent="EnemyBulletPhysics"]
 position = Vector2( -0.583803, 0.0277448 )

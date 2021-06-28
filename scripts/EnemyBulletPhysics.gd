@@ -15,7 +15,6 @@ func _set_speed(new_speed):
 func _physics_process(delta):
 	var _collisionResult = move_and_collide(direction * speed * delta)
 	if _collisionResult:
-		#queue_free()
 		if(_collisionResult.collider is StaticBody2D):
 			var body:StaticBody2D = _collisionResult.collider;
 			if(body.get_parent().has_method("show_bullet_collision")):
@@ -24,7 +23,7 @@ func _physics_process(delta):
 			print("EnemyBullet collided with ",_collisionResult.collider.name)
 			if(_collisionResult.collider.has_method("player_collision")):
 				_collisionResult.collider.player_collision(_collisionResult)
-		queue_free()
+		get_parent().queue_free()
 
 func has_been_shot(_unused):
 	print("enemy bullet destroyed")
