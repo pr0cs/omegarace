@@ -1,5 +1,7 @@
 extends Node
 
+onready var mod_player:ModPlayer = $ModPlayer
+
 signal score_updated
 signal player_died
 signal wave_updated
@@ -27,6 +29,13 @@ var currentWaveType = WaveType.NORMAL
 var hiscore: = 0
 var playerPos:Vector2 = Vector2.ZERO
 
+func play_music()->void:
+	mod_player.file = "res://assets/MOD.Raising Hell.mod"
+	mod_player.play()
+
+func stop_music()->void:
+	mod_player.stop()
+	
 func set_player_position(pos:Vector2)->void:
 	playerPos = pos
 
