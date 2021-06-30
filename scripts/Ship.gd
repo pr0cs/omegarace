@@ -9,6 +9,7 @@ var canFire = true
 
 func _unhandled_input(event):
 	if (event.is_action_pressed("fire") and canFire):
+		Scoreboard.shotsFired+=1
 		var bullet = bulletScene.instance()
 		get_parent().add_child(bullet)
 		bullet.global_position = _weapon_position.global_position

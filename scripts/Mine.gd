@@ -9,6 +9,8 @@ func _ready():
 
 	
 func get_score_value()->int:
+	Scoreboard.minesDestroyed+=1
+	Scoreboard.shotsHit+=1
 	return 3
 
 func doesnt_affect_wave()->bool:

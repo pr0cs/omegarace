@@ -32,6 +32,7 @@ func isEvolving()->bool:
 	return evolving
 
 func get_score_value()->int:
+	Scoreboard.shotsHit+=1
 	return 5
 
 

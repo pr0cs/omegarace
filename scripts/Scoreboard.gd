@@ -27,14 +27,22 @@ var currentWaveType = WaveType.NORMAL
 
 # local variables
 var hiscore: = 0
+var musicPlaying = false
+var enemyKills:=0
+var shotsFired:=0
+var minesDestroyed:=0
+var shotsHit:=0
 var playerPos:Vector2 = Vector2.ZERO
 
 func play_music()->void:
-	mod_player.file = "res://assets/MOD.Raising Hell.mod"
-	mod_player.play()
+	if (!musicPlaying):
+		mod_player.file = "res://assets/MOD.Raising Hell.mod"
+		mod_player.play()
+		musicPlaying=true
 
 func stop_music()->void:
 	mod_player.stop()
+	musicPlaying=false
 	
 func set_player_position(pos:Vector2)->void:
 	playerPos = pos
@@ -99,6 +107,8 @@ func set_wave(value:int) -> void:
 
 func enemy_killed(enemy:Node2D) -> void:
 	var value = enemy.get_score_value()
+	if(!enemy.has_method("doesnt_affect_wave")):
+		enemyKills+=1
 	set_score(score+value)
 	emit_signal("enemy_killed",enemy)
 

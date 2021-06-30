@@ -42,7 +42,10 @@ func _unhandled_input(event):
 
 func check_game_over():
 	if(Scoreboard.isGameOver()):
-		get_tree().change_scene("res://scenes/Start.tscn")
+		Scoreboard.play_music()
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		get_node("GameOverDialog").updateScoreboard()
+		get_node("GameOverDialog").popup()
 
 func _on_Main_pressed():
 	_toggle_pause()

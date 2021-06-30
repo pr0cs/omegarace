@@ -1,8 +1,23 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=12 format=2]
 
+[ext_resource path="res://assets/gameover.png" type="Texture" id=1]
 [ext_resource path="res://scenes/Map.tscn" type="PackedScene" id=2]
+[ext_resource path="res://icon.png" type="Texture" id=3]
 [ext_resource path="res://scripts/Main.gd" type="Script" id=4]
 [ext_resource path="res://assets/kenneyUI.tres" type="Theme" id=5]
+[ext_resource path="res://scripts/GameOverDialog.gd" type="Script" id=6]
+[ext_resource path="res://shaders/PlasmaNode.shader" type="Shader" id=7]
+[ext_resource path="res://shaders/logo.shader" type="Shader" id=8]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 7 )
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 8 )
+
+[sub_resource type="StyleBoxTexture" id=3]
+texture = ExtResource( 1 )
+region_rect = Rect2( 0, 0, 512, 80 )
 
 [node name="Main" type="Node"]
 pause_mode = 1
@@ -57,5 +72,207 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="GameOverDialog" type="PopupDialog" parent="."]
+visible = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -219.5
+margin_top = -194.5
+margin_right = 219.5
+margin_bottom = 194.5
+theme = ExtResource( 5 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InfoPanel" type="Panel" parent="GameOverDialog"]
+margin_left = 20.0
+margin_top = 16.0
+margin_right = 421.0
+margin_bottom = 374.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScoreValue" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 259.512
+margin_top = 111.921
+margin_right = 321.512
+margin_bottom = 129.921
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScoreLabel" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 183.321
+margin_top = 114.266
+margin_right = 253.321
+margin_bottom = 132.266
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Score:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EnemyKillsValue" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 261.122
+margin_top = 135.977
+margin_right = 301.122
+margin_bottom = 153.977
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EnemyKillsLabel" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 88.7389
+margin_top = 137.001
+margin_right = 254.739
+margin_bottom = 155.001
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Enemies Killed:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Cancel" type="Button" parent="GameOverDialog/InfoPanel"]
+margin_left = 162.938
+margin_top = 294.408
+margin_right = 262.938
+margin_bottom = 339.408
+text = "OK"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Logo" type="Node2D" parent="GameOverDialog/InfoPanel"]
+position = Vector2( 345, 57 )
+scale = Vector2( 0.5, 0.5 )
+
+[node name="Plasma" type="Sprite" parent="GameOverDialog/InfoPanel/Logo"]
+visible = false
+material = SubResource( 1 )
+position = Vector2( 575.325, 199.389 )
+scale = Vector2( 17.9696, 6.19717 )
+texture = ExtResource( 3 )
+
+[node name="Logo" type="Panel" parent="GameOverDialog/InfoPanel/Logo"]
+material = SubResource( 2 )
+margin_left = -657.158
+margin_top = -84.0487
+margin_right = 71.8416
+margin_bottom = 82.9513
+custom_styles/panel = SubResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinesValue" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 261.249
+margin_top = 182.508
+margin_right = 301.249
+margin_bottom = 200.508
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinesLabel" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 67.8299
+margin_top = 182.798
+margin_right = 254.83
+margin_bottom = 200.798
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Mines Destroyed:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WavesValue" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 261.55
+margin_top = 159.08
+margin_right = 301.55
+margin_bottom = 177.08
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WavesLabel" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 55.6053
+margin_top = 159.053
+margin_right = 254.605
+margin_bottom = 177.053
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Waves Completed:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShotsValue" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 263.092
+margin_top = 208.019
+margin_right = 303.092
+margin_bottom = 226.019
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShotsLabel" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 123.953
+margin_top = 209.676
+margin_right = 254.953
+margin_bottom = 227.676
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Shots Fired:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AccuracyValue" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 263.196
+margin_top = 235.274
+margin_right = 303.196
+margin_bottom = 253.274
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "0%"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AccuracyLabel" type="Label" parent="GameOverDialog/InfoPanel"]
+margin_left = 147.525
+margin_top = 234.931
+margin_right = 256.525
+margin_bottom = 252.931
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Accuracy:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator" type="HSeparator" parent="GameOverDialog/InfoPanel"]
+margin_left = 29.0
+margin_top = 96.0
+margin_right = 377.0
+margin_bottom = 109.0
+
 [connection signal="pressed" from="PauseDialog/Panel/Resume" to="." method="_on_Resume_pressed"]
 [connection signal="pressed" from="PauseDialog/Panel/Main" to="." method="_on_Main_pressed"]
+[connection signal="pressed" from="GameOverDialog/InfoPanel/Cancel" to="GameOverDialog" method="_on_Cancel_pressed"]

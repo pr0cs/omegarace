@@ -32,7 +32,7 @@ func _physics_process(delta):
 			else:
 				#hit another bullet, either player or enemy, destroy both
 				body.queue_free()
-				print("shot the shot")
+				Scoreboard.shotsHit+=1
 		#queue_free()
 	else:
 		# nothing happened in testing collision/movement, let it actually happen

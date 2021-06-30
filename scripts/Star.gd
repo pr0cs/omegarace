@@ -10,6 +10,7 @@ func _ready():
 	setBodyInitialVisibility()
 
 func get_score_value()->int:
+	Scoreboard.shotsHit+=1
 	return 7
 
 func usesPhysics()->bool:

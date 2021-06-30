@@ -70,7 +70,8 @@ func _on_Timer_timeout():
 	warpAnimation.play("Warp")
 	
 func finished_wave(_animation)->void:
-	warp.queue_free()
+	if(warp!=null):
+		warp.queue_free()
 	Scoreboard.wave+=1
 	explosionParticles=null;
 	respawn_player("start")
@@ -100,6 +101,9 @@ func respawn_player(_unused)->void:
 		player.queue_free()
 		player=null
 	_remove_all_bullets()
+	if(Scoreboard.isGameOver()):
+		return # player is dead, should be showing game over scoreboard here
+
 	setNebulaScene()
 	spawn_enemies()
 	var playerSpawnPosition:Position2D = get_node("PlayerSpawn")
@@ -155,10 +159,6 @@ func spawn_player():
 	player.global_position = playerSpawnPosition.position
 	add_child(player)
 
-func begin_game(animation)->void:
-	var layer:ColorRect = get_node("CanvasLayer/WarpLayer")
-	layer.visible=false
-	
 func spawn_enemy(enemy:Node2D,spriteName:String,position:Vector2):
 	add_child(enemy)
 	var sprite:Sprite = enemy.get_node(spriteName)
@@ -184,9 +184,7 @@ func animate_death()->void:
 	var cr:ColorRect = get_node("CanvasLayer/ShockwaveLayer")
 	var ap:AnimationPlayer = get_node("CanvasLayer/Shockwave")
 	var vpSize = get_viewport().size
-	#var pPos = Scoreboard.get_player_position()#player.get_node("ShipPhysics").position
 	var sposition = Vector2((Scoreboard.get_player_position().x/vpSize.x)*2.0-0.5 , (Scoreboard.get_player_position().y/vpSize.y))
-	#print(Scoreboard.get_player_position(),":",pPos)
 	var shaderMat:ShaderMaterial = cr.material
 	shaderMat.set_shader_param("center",sposition)
 	cr.visible=true
@@ -203,7 +201,6 @@ func animate_death()->void:
 		var shipTexture:Texture = ImageTexture.new()
 		shipTexture.create_from_image(img)
 		explosionParticles.get_node("Destruction").initialize(shipTexture)
-		#explosionParticles.get_node("Destruction").emitting = true
 		explosionParticles.get_node("Explosion").play("Explode")
 		add_child(explosionParticles)
 		player.queue_free()
