@@ -18,7 +18,6 @@ func _physics_process(delta):
 	var _collisionResult = move_and_collide(direction * speed * delta,true,true,true)
 	if _collisionResult:
 		# if we hit ANYTHING delete this bullet
-		queue_free()
 		if(_collisionResult.collider is StaticBody2D):
 			# collided with wall?
 			var body:StaticBody2D = _collisionResult.collider;
@@ -31,9 +30,10 @@ func _physics_process(delta):
 				body.has_been_shot(_collisionResult.position)
 			else:
 				#hit another bullet, either player or enemy, destroy both
+				Scoreboard.bullet_to_bullet_collision()
 				body.queue_free()
 				Scoreboard.shotsHit+=1
-		#queue_free()
+		queue_free()
 	else:
 		# nothing happened in testing collision/movement, let it actually happen
 		_collisionResult = move_and_collide(direction * speed * delta)

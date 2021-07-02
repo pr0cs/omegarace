@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scripts/ScoreUI.gd" type="Script" id=1]
 [ext_resource path="res://assets/kenneyUI.tres" type="Theme" id=2]
@@ -9,6 +9,12 @@ size = 25
 outline_size = 1
 outline_color = Color( 0.14902, 0.329412, 0.945098, 1 )
 use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 15
+outline_size = 1
+outline_color = Color( 1, 0.0235294, 0.0235294, 1 )
 font_data = ExtResource( 3 )
 
 [node name="ScoreUserInterface" type="Control"]
@@ -36,6 +42,17 @@ __meta__ = {
 [node name="ShipIconLoc" type="Position2D" parent="LivesLabel"]
 position = Vector2( 102.344, 6.66516 )
 
+[node name="ScoreLabel" type="Label" parent="."]
+margin_left = 63.4734
+margin_top = 32.9733
+margin_right = 133.473
+margin_bottom = 50.9733
+text = "Score:"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="ScoreValue" type="Label" parent="."]
 margin_left = 140.0
 margin_top = 33.0
@@ -53,17 +70,6 @@ margin_right = 180.0
 margin_bottom = 64.703
 text = "0"
 
-[node name="ScoreLabel" type="Label" parent="."]
-margin_left = 63.4734
-margin_top = 32.9733
-margin_right = 133.473
-margin_bottom = 50.9733
-text = "Score:"
-align = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="HiScoreLabel" type="Label" parent="."]
 margin_left = 6.44595
 margin_top = 46.6898
@@ -77,9 +83,9 @@ __meta__ = {
 
 [node name="WaveLabel" type="Label" parent="."]
 margin_left = 270.0
-margin_top = 8.0
+margin_top = 1.0
 margin_right = 330.0
-margin_bottom = 26.0
+margin_bottom = 19.0
 text = "Wave"
 align = 1
 __meta__ = {
@@ -88,11 +94,23 @@ __meta__ = {
 
 [node name="WaveValue" type="Label" parent="."]
 margin_left = 270.0
-margin_top = 26.0
+margin_top = 19.0
 margin_right = 330.0
-margin_bottom = 55.0
+margin_bottom = 48.0
 custom_fonts/font = SubResource( 1 )
 text = "11"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WaveType" type="Label" parent="."]
+margin_left = 264.122
+margin_top = 47.5612
+margin_right = 342.122
+margin_bottom = 65.5612
+custom_fonts/font = SubResource( 2 )
+text = "normal"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false

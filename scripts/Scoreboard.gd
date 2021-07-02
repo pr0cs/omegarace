@@ -38,6 +38,7 @@ func play_music()->void:
 	if (!musicPlaying):
 		mod_player.file = "res://assets/MOD.Raising Hell.mod"
 		mod_player.play()
+		mod_player.volume_db=0
 		musicPlaying=true
 
 func stop_music()->void:
@@ -52,28 +53,37 @@ func get_player_position()->Vector2:
 	
 func get_random_wavetype() -> int:
 	if wave < 5:
-		print("Wave:Easy/Normal")
+		# first 5 waves should be easier
 		return WaveType.NORMAL
 	else:
 		var chance = rng.randi() & 100
 		# this could feasibly look at the wave and get progressively harder
+		chance += wave
 		if( chance < 40):
-			print("Wave:Normal")
 			return WaveType.NORMAL
 		elif chance >39 and chance < 60:
-			print("Wave:Hyper")
 			return WaveType.HYPER
 		elif chance > 59 and chance < 80:
-			print("Wave:Horde")
 			return WaveType.HORDE
 		elif chance > 79:
-			print("Wave:Blitz")
 			return WaveType.BLITZ
-	print("Wave:Default Normal")
 	return WaveType.NORMAL
-	
+
+func getWaveTypeText()->String:
+	match(currentWaveType):
+		WaveType.NORMAL:
+			return ""
+		WaveType.HORDE:
+			return "Horde"
+		WaveType.BLITZ:
+			return "Blitz"
+		WaveType.HYPER:
+			return "Hyper"
+	return ""
+		
 func set_current_wavetype(waveType:int) -> void:
 	currentWaveType = waveType
+	emit_signal("wave_updated")
 
 func get_current_wavetype() -> int:
 	return currentWaveType
@@ -124,3 +134,6 @@ func randi(end:int)->int:
 
 func randf_range(start:float,end:float) -> float:
 	return rng.randf_range(start,end)
+	
+func bullet_to_bullet_collision()->void:
+	$BulletCollideAudio.play()

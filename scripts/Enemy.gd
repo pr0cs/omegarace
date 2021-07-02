@@ -103,6 +103,7 @@ func _process(delta):
 		cur_evolve +=delta
 		pct =cur_evolve/evolve_time
 		if(pct > 1):
+			$EnemyEvolvingAudio.play()
 			evolved = true
 			move_tween.stop_all()
 			evolve_factor = 2.5
@@ -133,6 +134,8 @@ func _on_Tween_tween_completed(_object, _key):
 
 func shoot():
 	var shootPct = 10 # 10% chance every timeout to shoot
+	if(Scoreboard.get_current_wavetype()==Scoreboard.WaveType.BLITZ):
+		shootPct += 20
 	if evolving:
 		shootPct += 10 # another 10% chance if the enemy is evolving
 	var waveModifier = (Scoreboard.wave / 15.0) + 1.0
@@ -142,12 +145,13 @@ func shoot():
 	var shootTest = Scoreboard.randi(100)
 	if(shootTest < shootPct):
 		print ("enemy chance to shoot % :",shootPct," shootTest:",shootTest)
+		get_node("EnemyShootAudio").play()
 		var bullet = enemyBullet.instance() as Node2D
 		get_parent().add_child(bullet)
+		get_parent().connect("bullet_collision",bullet,"bullet_collision")
 		bullet.position = position
 		var bPhys = bullet.get_node("EnemyBulletPhysics")
 		bPhys.direction = (Scoreboard.get_player_position() - position ).normalized()
-		print("bullet direction:",bPhys.direction)
 		bullet.rotation = global_position.angle_to_point(Scoreboard.get_player_position())
 
 func _on_FireTimer_timeout():
@@ -176,6 +180,7 @@ func _on_MineTimer_timeout():
 		var mineTest = Scoreboard.randi(100)
 		print("mine probability:",minePct," actual:",mineTest)
 		if(mineTest < minePct):
+			get_node("EnemyDropMineAudio").play()
 			var mine = enemyMine.instance() as Node2D
 			mine.position = position
 			get_parent().add_child(mine)

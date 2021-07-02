@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://assets/station4.png" type="Texture" id=1]
 [ext_resource path="res://assets/station3.png" type="Texture" id=2]
@@ -8,6 +8,9 @@
 [ext_resource path="res://assets/station2-normal.png" type="Texture" id=6]
 [ext_resource path="res://assets/station3-normal.png" type="Texture" id=7]
 [ext_resource path="res://assets/station4-normal.png" type="Texture" id=8]
+[ext_resource path="res://assets/audio/mine.ogg" type="AudioStream" id=9]
+[ext_resource path="res://assets/audio/synthetic_laser.ogg" type="AudioStream" id=10]
+[ext_resource path="res://assets/audio/evolving.ogg" type="AudioStream" id=11]
 
 [sub_resource type="Animation" id=1]
 resource_name = "Evolve"
@@ -181,6 +184,16 @@ normal_map = ExtResource( 6 )
 visible = false
 texture = ExtResource( 2 )
 normal_map = ExtResource( 7 )
+
+[node name="EnemyDropMineAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+
+[node name="EnemyShootAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 10 )
+
+[node name="EnemyEvolvingAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 11 )
+volume_db = 7.248
 
 [connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]
 [connection signal="timeout" from="FireTimer" to="." method="_on_FireTimer_timeout"]

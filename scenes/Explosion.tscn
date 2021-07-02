@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://assets/fireball2.png" type="Texture" id=1]
 [ext_resource path="res://assets/fireball.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://shaders/disolve.shader" type="Shader" id=4]
 [ext_resource path="res://assets/light.png" type="Texture" id=5]
 [ext_resource path="res://scripts/Explosion.gd" type="Script" id=6]
+[ext_resource path="res://assets/audio/enemydeath.ogg" type="AudioStream" id=7]
 
 [sub_resource type="OpenSimplexNoise" id=1]
 seed = 55
@@ -103,6 +104,18 @@ tracks/3/keys = {
 "update": 1,
 "values": [ true ]
 }
+tracks/4/type = "value"
+tracks/4/path = NodePath("EnemyExplosionAudio:playing")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [node name="explosion_fx" type="Node2D"]
 scale = Vector2( 3, 3 )
@@ -166,8 +179,11 @@ scale_amount_curve = SubResource( 4 )
 position = Vector2( 0.330132, -0.996372 )
 scale = Vector2( 0.709955, 0.729619 )
 texture = ExtResource( 5 )
-energy = 2.616
+energy = 2.254
 range_height = 50.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Explode = SubResource( 9 )
+
+[node name="EnemyExplosionAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )

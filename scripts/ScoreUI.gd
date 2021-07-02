@@ -3,6 +3,7 @@ extends Control
 onready var score: Label =  get_node("ScoreValue")
 onready var wave: Label =  get_node("WaveValue")
 onready var hiscore: Label =  get_node("HiScoreValue")
+onready var waveType: Label = get_node("WaveType")
 onready var shipIconPosition: Position2D = get_node("LivesLabel/ShipIconLoc")
 onready var shipIcon = preload("res://scenes//ShipIcon.tscn")
 
@@ -14,7 +15,7 @@ func _ready() -> void:
 	Scoreboard.connect("wave_updated",self,"update_interface")
 	Scoreboard.connect("player_died",self,"player_death")
 	Scoreboard.connect("rotation",self,"ship_rotated")
-	Scoreboard.wave = 1
+	Scoreboard.wave = 5
 	Scoreboard.lives = 3
 	var _numShips = Scoreboard.lives
 	
@@ -46,3 +47,4 @@ func update_interface() -> void:
 	score.text = "%s" % Scoreboard.score
 	wave.text = "%s" % Scoreboard.wave
 	hiscore.text = "%s" % Scoreboard.hiscore
+	waveType.text = Scoreboard.getWaveTypeText()

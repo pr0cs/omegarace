@@ -33,6 +33,7 @@ margin_top = 258.0
 margin_right = 744.0
 margin_bottom = 438.0
 theme = ExtResource( 5 )
+popup_exclusive = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -83,6 +84,7 @@ margin_top = -194.5
 margin_right = 219.5
 margin_bottom = 194.5
 theme = ExtResource( 5 )
+popup_exclusive = true
 script = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false

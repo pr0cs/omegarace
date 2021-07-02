@@ -54,7 +54,7 @@ func _remove_all_bullets() ->void :
 		if "Bullet" in kid.name:
 			kid.queue_free()
 		
-func _on_Timer_timeout():
+func _on_Wave_Timer_timeout():
 	cleanup_colliders()
 	_remove_all_bullets()
 	warp = warpScene.instance()
@@ -63,7 +63,6 @@ func _on_Timer_timeout():
 	add_child(warp)
 	if(player!=null):
 		player.queue_free()
-		player=null
 	warp.visible = true
 	var warpAnimation:AnimationPlayer = warp.get_node("WarpAnimation")
 	warpAnimation.connect("animation_finished",self,"finished_wave")
@@ -81,9 +80,6 @@ func start_next_wave(_animation)->void:
 	start_new_wave()
 
 func setNebulaScene()->void:
-	#if(Scoreboard.wave==1):
-	#	return
-	#nebulaShader.set_shader_param("octaves",Scoreboard.randi_range(5,7))
 	nebulaShader.set_shader_param("x_offset",0)
 	nebulaShader.set_shader_param("y_offset",0)
 	nebulaShader.set_shader_param("nebula_seed",Scoreboard.randi_range(4,50))
@@ -97,13 +93,9 @@ func respawn_player(_unused)->void:
 		explosionParticles.queue_free()
 	var cr:ColorRect = get_node("CanvasLayer/ShockwaveLayer")
 	cr.visible=false
-	if(player!=null):
-		player.queue_free()
-		player=null
 	_remove_all_bullets()
 	if(Scoreboard.isGameOver()):
 		return # player is dead, should be showing game over scoreboard here
-
 	setNebulaScene()
 	spawn_enemies()
 	var playerSpawnPosition:Position2D = get_node("PlayerSpawn")
@@ -118,9 +110,6 @@ func respawn_player(_unused)->void:
 func start_new_wave():
 	_remove_all_bullets()
 	if(!Scoreboard.isGameOver()):
-		if(player!=null):
-			player.queue_free()
-			player=null
 		spawn_player()
 	
 func check_wave_complete(destroyedEnemy:Node2D) ->void:
@@ -181,8 +170,8 @@ func update_enemy_array(original,new)->void:
 	enemyArray.append(new)
 
 func animate_death()->void:
-	var cr:ColorRect = get_node("CanvasLayer/ShockwaveLayer")
-	var ap:AnimationPlayer = get_node("CanvasLayer/Shockwave")
+	var cr:ColorRect = $CanvasLayer/ShockwaveLayer
+	var ap:AnimationPlayer = $CanvasLayer/Shockwave
 	var vpSize = get_viewport().size
 	var sposition = Vector2((Scoreboard.get_player_position().x/vpSize.x)*2.0-0.5 , (Scoreboard.get_player_position().y/vpSize.y))
 	var shaderMat:ShaderMaterial = cr.material
@@ -231,6 +220,8 @@ func enemy_teleported_in(teleportedEnemy)->void:
 	#remove_child(teleportedEnemy)
 	teleportedEnemy.get_node("TeleportAnimation").stop()
 	var enemy:Enemy = enemyScene.instance()
+	if(Scoreboard.get_current_wavetype()==Scoreboard.WaveType.HYPER):
+		enemy.setHyper()
 	spawn_enemy(enemy,"KinematicBody2D/E1",enemyPosition)
 	if(teleportedEnemy.evolver):
 		var minLife = 4
@@ -261,18 +252,22 @@ func spawn_enemies() -> void :
 		waveEnemyCount = Scoreboard.wave
 		waveEvolveCount = waveEnemyCount / 2
 	elif(waveType == Scoreboard.WaveType.HORDE):
-		waveEnemyCount = 30
+		waveEnemyCount = Scoreboard.randi_range(Scoreboard.wave,25)
 		waveEvolveCount = 2
 	Scoreboard.set_current_wavetype(waveType)
 	if(waveEnemyCount < 6):
 		waveEnemyCount = 6
-	#waveEnemyCount=3#DEBUG
+	#waveEnemyCount=1#DEBUG
 	for e in waveEnemyCount:
 		teleport_enemy_in((waveEvolveCount >0))
 		waveEvolveCount-=1
 
+func bullet_collision()->void:
+	$BulletCollideAudio.play()
+
 ############################################################################		
 func show_bullet_collision(collisionResult:KinematicCollision2D):
+	get_node("WallHitAudio").play()
 	var body:StaticBody2D = collisionResult.collider;
 	var coll = cold.instance()
 	var parts = coll.get_node("CollideParticles") as Particles2D

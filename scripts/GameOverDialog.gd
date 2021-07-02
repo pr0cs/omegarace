@@ -11,7 +11,9 @@ func updateScoreboard()->void:
 	wv.text = "%s" % (Scoreboard.wave-1)
 	sf.text = "%s" % Scoreboard.shotsFired
 	ek.text = "%s" % Scoreboard.enemyKills
-	var accuracy:float = (float(Scoreboard.shotsHit) / float(Scoreboard.shotsFired) * 100.0)
+	var accuracy:float = 0.0
+	if(Scoreboard.shotsFired>0.0):
+		accuracy = (float(Scoreboard.shotsHit) / float(Scoreboard.shotsFired) * 100.0)
 	ac.text = "%3.1f" % accuracy
 	ac.text += "%"
 	mk.text = "%s" % Scoreboard.minesDestroyed

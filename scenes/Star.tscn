@@ -119,3 +119,5 @@ normal_map = ExtResource( 6 )
 modulate = Color( 1, 1, 1, 0.0784314 )
 texture = ExtResource( 4 )
 normal_map = ExtResource( 5 )
+
+[connection signal="timeout" from="FireTimer" to="." method="_on_FireTimer_timeout"]

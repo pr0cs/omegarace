@@ -1,8 +1,8 @@
 extends KinematicBody2D
 
+onready var collideAudio:AudioStreamPlayer = $BulletCollideAudio
 var speed = 200 # 200 per second
 var direction = Vector2.ZERO
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -25,7 +25,8 @@ func _physics_process(delta):
 				_collisionResult.collider.player_collision(_collisionResult)
 		get_parent().queue_free()
 
-func has_been_shot(_unused):
+func has_been_shot(_unused):	
 	print("enemy bullet destroyed")
+	Scoreboard.bullet_to_bullet_collision()
 	Scoreboard.enemy_killed(get_parent())
 	queue_free()

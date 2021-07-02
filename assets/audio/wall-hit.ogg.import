@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/wall-hit.ogg-88b198b6533d0fb25e7ce47cb8a4d45e.oggstr"
+
+[deps]
+
+source_file="res://assets/audio/wall-hit.ogg"
+dest_files=[ "res://.import/wall-hit.ogg-88b198b6533d0fb25e7ce47cb8a4d45e.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

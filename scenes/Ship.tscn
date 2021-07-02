@@ -1,13 +1,11 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://scripts/Ship.gd" type="Script" id=1]
 [ext_resource path="res://assets/lightfighter0006.png" type="Texture" id=2]
 [ext_resource path="res://assets/bullet.png" type="Texture" id=3]
 [ext_resource path="res://assets/enemylight.png" type="Texture" id=4]
-[ext_resource path="res://assets/pixel.png" type="Texture" id=5]
-[ext_resource path="res://scripts/Destruction.gd" type="Script" id=6]
-[ext_resource path="res://assets/lightfighter0006-proto.png" type="Texture" id=7]
-[ext_resource path="res://shaders/shipexplosion.shader" type="Shader" id=8]
+[ext_resource path="res://assets/audio/shoot.ogg" type="AudioStream" id=9]
+[ext_resource path="res://assets/audio/thrust.wav" type="AudioStream" id=10]
 [ext_resource path="res://scripts/Propulsion.gd" type="Script" id=13]
 
 [sub_resource type="SpriteFrames" id=1]
@@ -51,42 +49,6 @@ angle_random = 1.0
 scale = 5.0
 scale_curve = SubResource( 6 )
 color_ramp = SubResource( 4 )
-
-[sub_resource type="ShaderMaterial" id=8]
-shader = ExtResource( 8 )
-shader_param/direction = Vector3( 1, 0, 0 )
-shader_param/spread = 44.435
-shader_param/flatness = 0.0
-shader_param/initial_linear_velocity = 2.0
-shader_param/initial_angle = 0.0
-shader_param/angular_velocity = 0.0
-shader_param/orbit_velocity = 0.0
-shader_param/linear_accel = 0.0
-shader_param/radial_accel = 0.0
-shader_param/tangent_accel = 0.0
-shader_param/damping = 0.0
-shader_param/scale = 1.0
-shader_param/hue_variation = 0.0
-shader_param/anim_speed = 0.0
-shader_param/anim_offset = 0.0
-shader_param/initial_linear_velocity_random = 0.0
-shader_param/initial_angle_random = 0.0
-shader_param/angular_velocity_random = 0.0
-shader_param/orbit_velocity_random = 0.0
-shader_param/linear_accel_random = 0.0
-shader_param/radial_accel_random = 0.0
-shader_param/tangent_accel_random = 0.0
-shader_param/damping_random = 0.0
-shader_param/scale_random = 0.0
-shader_param/hue_variation_random = 0.0
-shader_param/anim_speed_random = 0.0
-shader_param/anim_offset_random = 0.0
-shader_param/lifetime_randomness = 0.0
-shader_param/emission_box_extents = Vector3( 55, 42, 1 )
-shader_param/color_value = Color( 1, 1, 1, 1 )
-shader_param/trail_divisor = 1
-shader_param/gravity = Vector3( 0, -1e-06, 0 )
-shader_param/sprite = ExtResource( 7 )
 
 [node name="Ship" type="Node2D"]
 script = ExtResource( 1 )
@@ -139,12 +101,12 @@ one_way_collision_margin = 128.0
 [node name="FireTimer" type="Timer" parent="ShipPhysics"]
 one_shot = true
 
-[node name="Destruction" type="Particles2D" parent="."]
-visible = false
-amount = 4000
-explosiveness = 1.0
-process_material = SubResource( 8 )
-texture = ExtResource( 5 )
-script = ExtResource( 6 )
+[node name="ShipShootAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+
+[node name="ShipThrustAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 10 )
+volume_db = -16.053
+pitch_scale = 0.76
 
 [connection signal="timeout" from="ShipPhysics/FireTimer" to="." method="_on_FireTimer_timeout"]

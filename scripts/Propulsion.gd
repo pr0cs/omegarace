@@ -69,11 +69,9 @@ func _physics_process(delta):
 	if(collisionResult):
 		if(collisionResult.collider is KinematicBody2D):
 			print("Player collided with ",collisionResult.collider.name)
-			#var body:KinematicBody2D = collisionResult.collider;
 			# we can assume that ANY sort of collision at this point
 			# will have some sort of effect on the player
 			player_collision(collisionResult)
-			#emit_signal("player_died")
 		else:
 			velocity = velocity.bounce(collisionResult.normal)
 			# stop ship from rotating otherwise it can get "stuck"
@@ -82,13 +80,5 @@ func _physics_process(delta):
 
 
 func player_collision(_collisionResult:KinematicCollision2D)->void:
-	#explosion = shipExplosion.instance()
-	#get_parent().add_child(explosion)
-	#var explodeAnim:AnimationPlayer = explosion.get_node("AnimationPlayer")
-	#explodeAnim.connect("animation_finished",self,"remove_explosion")
-	#explosion.get_node("AnimationPlayer").play("Explode")
-	# Display explosion?
-	
-	print ("Show ship explosion")	
 	Scoreboard.lives -=1
 	

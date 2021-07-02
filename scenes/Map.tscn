@@ -1,10 +1,11 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://scripts/Map.gd" type="Script" id=1]
 [ext_resource path="res://scenes/ScoreUI.tscn" type="PackedScene" id=2]
 [ext_resource path="res://shaders/linerand.shader" type="Shader" id=3]
 [ext_resource path="res://shaders/nebula.shader" type="Shader" id=4]
 [ext_resource path="res://shaders/shockwave.shader" type="Shader" id=5]
+[ext_resource path="res://assets/audio/wall-hit.ogg" type="AudioStream" id=6]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 4 )
@@ -285,4 +286,8 @@ position = Vector2( 1113.46, 97.2957 )
 wait_time = 5.0
 one_shot = true
 
-[connection signal="timeout" from="WaveRestartTimer" to="." method="_on_Timer_timeout"]
+[node name="WallHitAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+volume_db = -4.106
+
+[connection signal="timeout" from="WaveRestartTimer" to="." method="_on_Wave_Timer_timeout"]
