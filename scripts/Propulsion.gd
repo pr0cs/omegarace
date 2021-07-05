@@ -2,7 +2,6 @@ extends KinematicBody2D
 
 onready var _animated_sprite = $ShipSprite
 onready var _engine_particles = $Engine
-#onready var shipExplosion: PackedScene = preload("res://scenes/ShipExplosion.tscn")
 
 var velocity = Vector2()
 export var move_speed = 250
@@ -27,15 +26,12 @@ func prepare_to_warp():
 	deceleration_factor = 1.5
 
 func _turn_ship(relative:int):
-	#print(relative)
-	if abs(relative)>5:
-		rotate_speed+=relative/3.0
-		if(rotate_speed>500):
-			rotate_speed=500
-		elif(rotate_speed<-500):
-			rotate_speed=-500
+	rotate_speed+=relative * Scoreboard.getSensitivity()#relative/3.0
+	if(rotate_speed>500):
+		rotate_speed=500
+	elif(rotate_speed<-500):
+		rotate_speed=-500
 		
-			
 func _fly_ship(delta):
 	#dampen rotation
 	if(rotate_speed >0.5):
@@ -68,7 +64,7 @@ func _physics_process(delta):
 	var collisionResult = move_and_collide(velocity * delta)
 	if(collisionResult):
 		if(collisionResult.collider is KinematicBody2D):
-			print("Player collided with ",collisionResult.collider.name)
+			#print("Player collided with ",collisionResult.collider.name) #DEBUG
 			# we can assume that ANY sort of collision at this point
 			# will have some sort of effect on the player
 			player_collision(collisionResult)
@@ -78,7 +74,8 @@ func _physics_process(delta):
 			# rotating against the same surface in the next frame
 			rotate_speed=0
 
-
-func player_collision(_collisionResult:KinematicCollision2D)->void:
-	Scoreboard.lives -=1
+# let the map roll out the explosion and deal with life lost
+func player_collision(collisionResult:KinematicCollision2D)->void:	
+	$ShipCollisionPoly.disabled=true
+	get_parent().emit_signal("player_collision",get_parent().position,rotation,collisionResult.collider)
 	

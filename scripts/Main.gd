@@ -1,6 +1,7 @@
 extends Node
 
 var paused = false
+var debug=false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -10,11 +11,12 @@ func _ready():
 	pass # Replace with function body.
 
 func _print_map_children()->void:
-	var kids = get_children()
-	for kid in kids:
-		if(kid.name=="Map"):
-			for mkid in kid.get_children():
-				print("Map:",mkid.name)
+	if(debug):
+		var kids = get_children()
+		for kid in kids:
+			if(kid.name=="Map"):
+				for mkid in kid.get_children():
+					print("Map:",mkid.name)
 
 func _toggle_pause():
 	paused = !paused

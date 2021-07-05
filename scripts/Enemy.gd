@@ -40,8 +40,7 @@ func _move(newDirection):
 	var ex=0
 	var ey=0
 	var horizontal:bool=true
-	var vpSize = OS.window_size
-	vpSize = get_viewport().size
+	var vpSize =get_viewport().get_visible_rect().size
 	match newDirection:
 		Scoreboard.EnemyDir.LEFT:
 			ex = Scoreboard.randi_range(body_size.x,min(scoreBox.position.x-body_size.x,position.x-body_size.x))
@@ -135,7 +134,7 @@ func _on_Tween_tween_completed(_object, _key):
 func shoot():
 	var shootPct = 10 # 10% chance every timeout to shoot
 	if(Scoreboard.get_current_wavetype()==Scoreboard.WaveType.BLITZ):
-		shootPct += 20
+		shootPct += 12
 	if evolving:
 		shootPct += 10 # another 10% chance if the enemy is evolving
 	var waveModifier = (Scoreboard.wave / 15.0) + 1.0
@@ -148,7 +147,6 @@ func shoot():
 		get_node("EnemyShootAudio").play()
 		var bullet = enemyBullet.instance() as Node2D
 		get_parent().add_child(bullet)
-		get_parent().connect("bullet_collision",bullet,"bullet_collision")
 		bullet.position = position
 		var bPhys = bullet.get_node("EnemyBulletPhysics")
 		bPhys.direction = (Scoreboard.get_player_position() - position ).normalized()

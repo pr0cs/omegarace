@@ -17,6 +17,7 @@ enum WaveType{	NORMAL, # normal, nothing special
 
 # Global Vars
 var rng = RandomNumberGenerator.new()
+var sensitivity = 0.2
 
 # signal variables
 var rotation: = 0.0 setget set_rotation
@@ -40,6 +41,9 @@ func play_music()->void:
 		mod_player.play()
 		mod_player.volume_db=0
 		musicPlaying=true
+
+func getSensitivity()->float:
+	return sensitivity
 
 func stop_music()->void:
 	mod_player.stop()

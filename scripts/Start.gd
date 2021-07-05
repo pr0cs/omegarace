@@ -4,6 +4,7 @@ extends Control
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	Scoreboard.play_music()
+	$ColorRect/SettingsDialog/Panel/Sensitivity.value = Scoreboard.sensitivity
 
 func _on_Play_pressed():
 	Scoreboard.stop_music()
@@ -25,3 +26,7 @@ func _on_Quit_pressed():
 	Scoreboard.stop_music()
 	get_tree().quit()
 
+
+
+func _on_Sensitivity_value_changed(value):
+	Scoreboard.sensitivity = value

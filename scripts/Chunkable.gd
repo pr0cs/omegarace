@@ -44,9 +44,10 @@ func on_got_hit(_collision_position):
 		bodyPosition = get_node("KinematicBody2D").global_position
 	explosion = expScene.instance()
 	explosion.position = bodyPosition
-	get_parent().add_child(explosion)
+	get_parent().add_child(explosion) # DEBUG
 	explosion.get_node("AnimationPlayer").connect("animation_finished",explosion,"explosion_finished")
-	explosion.get_node("AnimationPlayer").play("Explode")
+	explosion.get_node("AnimationPlayer").play("Explode") # DEBUG\
+	Scoreboard.enemy_killed(self)
 	var curSprite:Sprite = get_current_enemy_texture()
 	var img:Image=null
 	if curSprite != null:
@@ -54,7 +55,6 @@ func on_got_hit(_collision_position):
 		img = curSprite.texture.get_data()
 		img.resize(150,150)
 	visible=false
-	#emit_signal("create_shockwave",collision_position)
 	var offset: Vector2 = Vector2.ZERO
 	var chunk_sprite_cut_start = Vector2(0,0)
 	for _x in range(0,6):
@@ -75,7 +75,7 @@ func on_got_hit(_collision_position):
 		offset.y =0
 		offset.x += offset_value
 	#queue_free()
-	Scoreboard.enemy_killed(self)
+	
 
 # retrieve the current sprite in the playing animation so we can chunk it up
 # there is no way to get the actual graphical 'frame' from the animation so we

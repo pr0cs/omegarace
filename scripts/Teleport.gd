@@ -9,5 +9,5 @@ func teleport_enemy_in(isAnEvolver:bool)->void:
 	var length = Scoreboard.randf_range(.4,2.5)
 	get_node("TeleportAnimation").play("Teleport",-1,length,false)
 	
-func _on_TeleportAnimation_animation_finished(anim_name):
+func _on_TeleportAnimation_animation_finished(_anim_name):
 	emit_signal("enemy_teleported",self)

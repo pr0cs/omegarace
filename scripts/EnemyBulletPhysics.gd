@@ -1,6 +1,5 @@
 extends KinematicBody2D
 
-onready var collideAudio:AudioStreamPlayer = $BulletCollideAudio
 var speed = 200 # 200 per second
 var direction = Vector2.ZERO
 

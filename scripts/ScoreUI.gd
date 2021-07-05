@@ -15,7 +15,7 @@ func _ready() -> void:
 	Scoreboard.connect("wave_updated",self,"update_interface")
 	Scoreboard.connect("player_died",self,"player_death")
 	Scoreboard.connect("rotation",self,"ship_rotated")
-	Scoreboard.wave = 5
+	Scoreboard.wave = 1
 	Scoreboard.lives = 3
 	var _numShips = Scoreboard.lives
 	

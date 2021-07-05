@@ -30,7 +30,10 @@ func _ready():
 	compute_scorebox_rect()
 	respawn_player("start")
 	Scoreboard.connect("enemy_killed",self,"check_wave_complete")
-	Scoreboard.connect("player_died",self,"animate_death")
+	# connect the animation player for shockwave, this only needs to be done once
+	var ap:AnimationPlayer = $CanvasLayer/Shockwave
+	ap.connect("animation_finished",self,"respawn_player")
+
 
 func compute_scorebox_rect():
 	var _defaultPos:Vector2 = get_node("ScoreNorthBody/ScoreNorthShape").global_position
@@ -61,18 +64,16 @@ func _on_Wave_Timer_timeout():
 	warp.position = Scoreboard.get_player_position()
 	warp.rotation_degrees = Scoreboard.rotation-180.0
 	add_child(warp)
-	if(player!=null):
-		player.queue_free()
 	warp.visible = true
 	var warpAnimation:AnimationPlayer = warp.get_node("WarpAnimation")
 	warpAnimation.connect("animation_finished",self,"finished_wave")
+	player.queue_free()
 	warpAnimation.play("Warp")
 	
 func finished_wave(_animation)->void:
 	if(warp!=null):
 		warp.queue_free()
 	Scoreboard.wave+=1
-	explosionParticles=null;
 	respawn_player("start")
 	
 func start_next_wave(_animation)->void:
@@ -89,8 +90,6 @@ func setNebulaScene()->void:
 	nebulaShader.set_shader_param("viewport_size",vp)
 	
 func respawn_player(_unused)->void:
-	if(explosionParticles!=null):
-		explosionParticles.queue_free()
 	var cr:ColorRect = get_node("CanvasLayer/ShockwaveLayer")
 	cr.visible=false
 	_remove_all_bullets()
@@ -112,6 +111,7 @@ func start_new_wave():
 	if(!Scoreboard.isGameOver()):
 		spawn_player()
 	
+
 func check_wave_complete(destroyedEnemy:Node2D) ->void:
 	cleanup_colliders()
 	if(destroyedEnemy.has_method("doesnt_affect_wave")):
@@ -120,12 +120,12 @@ func check_wave_complete(destroyedEnemy:Node2D) ->void:
 	enemyArray.erase(destroyedEnemy)
 	if(enemyCount == enemyArray.size()):
 		return # no enemy removed, probably a bullet lets ignore it
-	print(destroyedEnemy.name," was killed, enemies left:",enemyArray.size())
+	#print(destroyedEnemy.name," was killed, enemies left:",enemyArray.size())#DEBUG
 	if(enemyArray.empty()):
 		#respawn enemies and player ship after X number of seconds
 		destroyedEnemy.queue_free()
 		player.prepare_to_warp()
-		get_node("WaveRestartTimer").start()
+		$WaveRestartTimer.start()
 	else:
 		if(destroyedEnemy.isEvolving()):
 			var minLife = 4
@@ -143,11 +143,49 @@ func find_next_non_evolving_enemy() -> Node2D:
 	return null
 
 func spawn_player():
-	player = playerScene.instance() as Node2D
+	player = playerScene.instance() as Ship
 	var playerSpawnPosition:Position2D = get_node("PlayerSpawn")
-	player.global_position = playerSpawnPosition.position
+	player.position = playerSpawnPosition.position
+	player.connect("player_collision",self,"player_collision")
 	add_child(player)
 
+func player_collision(position:Vector2,rotation:float,collider:KinematicBody2D):
+	$WaveRestartTimer.set_paused(true)
+	if(collider.has_method("has_been_shot")):
+		#simulate the enemy being shot to destroy them too
+		collider.has_been_shot(position)
+	var cr:ColorRect = $CanvasLayer/ShockwaveLayer
+	var ap:AnimationPlayer = $CanvasLayer/Shockwave
+	var vpSize = get_viewport().get_visible_rect().size#get_viewport().size
+	var sposition = Vector2((Scoreboard.get_player_position().x/vpSize.x)*2.0-0.5 , (Scoreboard.get_player_position().y/vpSize.y))
+	var shaderMat:ShaderMaterial = cr.material
+	shaderMat.set_shader_param("center",sposition)
+	cr.visible=true
+	explosionParticles = shipExplodeScene.instance()
+	explosionParticles.position = Scoreboard.get_player_position()
+	explosionParticles.rotation_degrees = Scoreboard.rotation - 180.0
+	var img:Image=null
+	var sprite:Sprite=null;
+	sprite = player.getSprite()
+	img = sprite.texture.get_data()
+	img.resize(150,150)
+	var shipTexture:Texture = ImageTexture.new()
+	shipTexture.create_from_image(img)
+	explosionParticles.get_node("Destruction").initialize(shipTexture)
+	var particleAnim:AnimationPlayer = explosionParticles.get_node("Explosion")
+	particleAnim.connect("animation_finished",self,"free_particles")
+	particleAnim.play("Explode")
+	add_child(explosionParticles)
+	ap.connect("animation_finished",self,"restart")
+	ap.play("Shockwave")
+	Scoreboard.lives-=1
+	player.queue_free()
+	$WaveRestartTimer.set_paused(false)
+	$WaveRestartTimer.stop()
+	
+func free_particles(_unused)->void:
+	explosionParticles.queue_free()
+	
 func spawn_enemy(enemy:Node2D,spriteName:String,position:Vector2):
 	add_child(enemy)
 	var sprite:Sprite = enemy.get_node(spriteName)
@@ -161,6 +199,7 @@ func spawn_enemy(enemy:Node2D,spriteName:String,position:Vector2):
 	enemyArray.append(enemy)
 	enemy.connect("enemy_evolved",self, "update_enemy_array")
 
+
 func update_enemy_array(original,new)->void:
 	var enemyCount = enemyArray.size()
 	enemyArray.erase(original)
@@ -169,34 +208,6 @@ func update_enemy_array(original,new)->void:
 		return 
 	enemyArray.append(new)
 
-func animate_death()->void:
-	var cr:ColorRect = $CanvasLayer/ShockwaveLayer
-	var ap:AnimationPlayer = $CanvasLayer/Shockwave
-	var vpSize = get_viewport().size
-	var sposition = Vector2((Scoreboard.get_player_position().x/vpSize.x)*2.0-0.5 , (Scoreboard.get_player_position().y/vpSize.y))
-	var shaderMat:ShaderMaterial = cr.material
-	shaderMat.set_shader_param("center",sposition)
-	cr.visible=true
-	ap.connect("animation_finished",self,"respawn_player")
-	if(player!=null):
-		explosionParticles = shipExplodeScene.instance()
-		explosionParticles.position = Scoreboard.get_player_position()
-		explosionParticles.rotation_degrees = Scoreboard.rotation - 180.0
-		var img:Image=null
-		var sprite:Sprite=null;
-		sprite = player.getSprite()
-		img = sprite.texture.get_data()
-		img.resize(150,150)
-		var shipTexture:Texture = ImageTexture.new()
-		shipTexture.create_from_image(img)
-		explosionParticles.get_node("Destruction").initialize(shipTexture)
-		explosionParticles.get_node("Explosion").play("Explode")
-		add_child(explosionParticles)
-		player.queue_free()
-		player=null
-	ap.play("Shockwave")
-	
-
 	
 func teleport_enemy_in(evolver:bool) -> void:
 	var teleporter = teleportScene.instance()
@@ -204,8 +215,7 @@ func teleport_enemy_in(evolver:bool) -> void:
 	var default_size = sprite.get_rect().size.x 
 	default_size*=(sprite.scale/2)
 	# set up default spawn in position for enemy
-	var vpSize = OS.window_size
-	vpSize = get_viewport().size
+	var vpSize = get_viewport().get_visible_rect().size#get_viewport().size
 	var xpos = Scoreboard.randi_range(default_size.x,vpSize.x-default_size.x)
 	var ypos = Scoreboard.randi_range(scoreBox.end.y+default_size.y,vpSize.y-default_size.y)
 	teleporter.position.x=xpos;
@@ -257,13 +267,12 @@ func spawn_enemies() -> void :
 	Scoreboard.set_current_wavetype(waveType)
 	if(waveEnemyCount < 6):
 		waveEnemyCount = 6
-	#waveEnemyCount=1#DEBUG
+	#waveEnemyCount=5#dEBUG
+	#waveEvolveCount=-1#DEBUG
 	for e in waveEnemyCount:
 		teleport_enemy_in((waveEvolveCount >0))
 		waveEvolveCount-=1
 
-func bullet_collision()->void:
-	$BulletCollideAudio.play()
 
 ############################################################################		
 func show_bullet_collision(collisionResult:KinematicCollision2D):
