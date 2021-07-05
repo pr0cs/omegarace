@@ -176,7 +176,7 @@ func player_collision(position:Vector2,rotation:float,collider:KinematicBody2D):
 	particleAnim.connect("animation_finished",self,"free_particles")
 	particleAnim.play("Explode")
 	add_child(explosionParticles)
-	ap.connect("animation_finished",self,"restart")
+	#ap.connect("animation_finished",self,"restart")
 	ap.play("Shockwave")
 	Scoreboard.lives-=1
 	player.queue_free()

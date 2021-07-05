@@ -5,7 +5,7 @@
 [ext_resource path="res://shaders/logo.shader" type="Shader" id=3]
 [ext_resource path="res://assets/kenneyUI.tres" type="Theme" id=5]
 
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 3 )
 
 [sub_resource type="StyleBoxTexture" id=2]
@@ -152,7 +152,7 @@ position = Vector2( 345, 57 )
 scale = Vector2( 0.5, 0.5 )
 
 [node name="Logo" type="Panel" parent="ColorRect/Logo"]
-material = SubResource( 6 )
+material = SubResource( 1 )
 margin_left = -1.0
 margin_right = 1159.0
 margin_bottom = 399.0

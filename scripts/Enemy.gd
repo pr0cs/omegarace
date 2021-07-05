@@ -11,7 +11,7 @@ var evolve_factor = 1
 var isHyper:bool = false
 var scoreBox:Rect2
 var movingDirection = Scoreboard.EnemyDir.LEFT
-onready var move_tween = get_node("Tween")
+onready var move_tween = $Tween
 onready var enemyBullet = preload("res://scenes/EnemyBullet.tscn")
 var starScene : PackedScene = preload("res://scenes/Star.tscn")
 onready var enemyMine = preload("res://scenes/Mine.tscn")
@@ -143,7 +143,7 @@ func shoot():
 		shootPct = 100	
 	var shootTest = Scoreboard.randi(100)
 	if(shootTest < shootPct):
-		print ("enemy chance to shoot % :",shootPct," shootTest:",shootTest)
+		#print ("enemy chance to shoot % :",shootPct," shootTest:",shootTest)
 		get_node("EnemyShootAudio").play()
 		var bullet = enemyBullet.instance() as Node2D
 		get_parent().add_child(bullet)
@@ -176,7 +176,7 @@ func _on_MineTimer_timeout():
 		if minePct > 100:
 			minePct = 100	
 		var mineTest = Scoreboard.randi(100)
-		print("mine probability:",minePct," actual:",mineTest)
+		#print("mine probability:",minePct," actual:",mineTest)
 		if(mineTest < minePct):
 			get_node("EnemyDropMineAudio").play()
 			var mine = enemyMine.instance() as Node2D

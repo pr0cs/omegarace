@@ -19,7 +19,7 @@ func _physics_process(delta):
 			if(body.get_parent().has_method("show_bullet_collision")):
 				body.get_parent().show_bullet_collision(_collisionResult)
 		elif(_collisionResult.collider is KinematicBody2D):
-			print("EnemyBullet collided with ",_collisionResult.collider.name)
+			#print("EnemyBullet collided with ",_collisionResult.collider.name)
 			if(_collisionResult.collider.has_method("player_collision")):
 				_collisionResult.collider.player_collision(_collisionResult)
 		get_parent().queue_free()
