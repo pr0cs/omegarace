@@ -4,6 +4,10 @@
 
 ![image](https://github.com/pr0cs/omegarace/blob/adab911ef59f0553b1de1a7977316c91b6bcef3f/assets/Omega_Race_original.jpg)
 
+## Jul 15, 2021
+Functionally complete, prebuilt binaries can be found at:
+https://pr0cs.itch.io/omegarace2021
+
 ## Jun 30, 2021
 #### Working:
 1. Initial startup / menu

@@ -9,6 +9,10 @@ void fragment(){
 	}else{
 		COLOR = originalColor;
 		COLOR.a = 0.0;
+		if(originalColor.r >0.5){
+			COLOR.a = 1.0;
+		}
+		
 	}
 	
 	
